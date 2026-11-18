@@ -1,0 +1,2222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Penyusunan RKAS BOSP Universal (PAUD, SD, SMP, SMA, SMK, SLB, Kesetaraan) - Permendikdasmen No. 8/2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon Profesional -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Pengaturan khusus untuk mode cetak (Print / PDF) */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 8.5pt;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                padding: 3px 5px !important;
+            }
+        }
+        /* Custom Scrollbar untuk tabel responsif */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-primary-100 selection:text-primary-900">
+
+    <!-- Notifikasi Toast Custom -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Input File Tersembunyi untuk Restore JSON -->
+    <input type="file" id="import-json-input" accept=".json" class="hidden" onchange="importJsonData(event)">
+
+    <!-- Navbar / Header Aplikasi -->
+    <header class="bg-gradient-to-r from-primary-900 via-primary-800 to-primary-700 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/20">
+                        <i class="fa-solid fa-file-invoice-dollar text-2xl text-amber-300"></i>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-amber-400 text-primary-950 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">TA 2027</span>
+                            <span class="bg-emerald-500/20 border border-emerald-300/30 text-emerald-100 text-xs font-medium px-2.5 py-0.5 rounded-full">Permendikdasmen No. 8 Tahun 2026</span>
+                            <span id="autosave-badge" class="text-[11px] text-primary-200 flex items-center gap-1"><i class="fa-solid fa-cloud-check"></i> Tersimpan Otomatis</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight mt-1">Sistem Penyusunan RKAS BOSP Universal</h1>
+                        <p class="text-xs sm:text-sm text-primary-100">Mendukung PAUD, SD, SMP, SMA, SMK, SLB, & Kesetaraan (Negeri & Swasta) Berbasis PBD</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="exportJsonData()" title="Simpan Cadangan File Kerja (.json)" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-3 py-2.5 rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i>
+                        <span class="hidden sm:inline">Backup JSON</span>
+                    </button>
+                    <button onclick="document.getElementById('import-json-input').click()" title="Muat File Kerja (.json)" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-3 py-2.5 rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload"></i>
+                        <span class="hidden sm:inline">Muat JSON</span>
+                    </button>
+                    <button onclick="openPreviewModal()" class="bg-white text-primary-800 hover:bg-primary-50 font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Preview & Cetak</span>
+                    </button>
+                    <button onclick="openItemModal()" class="bg-amber-400 hover:bg-amber-300 text-primary-950 font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Kegiatan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 no-print">
+
+        <!-- Panel Konfigurasi Satuan Pendidikan & Parameter Pagu -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-5 gap-3">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-primary-600"></i>
+                        Identitas Satuan Pendidikan & Parameter Pagu BOSP
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Pilih jenjang dan status sekolah untuk menyesuaikan komponen BOSP, indeks satuan biaya, dan batas persentase regulasi.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="autoBalanceBudget()" class="text-xs text-amber-800 hover:text-amber-950 font-semibold bg-amber-100 hover:bg-amber-200 border border-amber-300 px-3 py-1.5 rounded-lg transition" title="Sesuaikan otomatis sisa pagu agar RKAS pas 100% (Sisa Rp 0)">
+                        <i class="fa-solid fa-scale-unbalanced-flip mr-1"></i> Seimbangkan Sisa Pagu (Pas 100%)
+                    </button>
+                    <button onclick="loadPresetTemplate()" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-lg transition">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Reset Template Jenjang Ini
+                    </button>
+                    <button onclick="resetToDefaultSMPN2()" class="text-xs text-primary-600 hover:text-primary-800 font-medium bg-primary-50 hover:bg-primary-100 px-3 py-1.5 rounded-lg transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Preset SMPN 2 Cigedug (590 Siswa)
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                <!-- Jenjang Pendidikan -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Jenjang Pendidikan</label>
+                    <select id="school-level" onchange="handleLevelChange()" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-primary-900 focus:ring-2 focus:ring-primary-500 outline-none bg-primary-50/30">
+                        <option value="PAUD">PAUD (TK/KB/TPA/SPS)</option>
+                        <option value="SD">SD / Sederajat</option>
+                        <option value="SMP" selected>SMP / Sederajat</option>
+                        <option value="SMA">SMA / Sederajat</option>
+                        <option value="SMK">SMK / Sederajat</option>
+                        <option value="SLB">SLB (Inklusif/Khusus)</option>
+                        <option value="KESETARAAN">Kesetaraan (PKBM/SKB)</option>
+                    </select>
+                </div>
+
+                <!-- Status Sekolah -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Status Sekolah</label>
+                    <select id="school-status" onchange="updateConfig()" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none bg-white">
+                        <option value="NEGERI" selected>Negeri</option>
+                        <option value="SWASTA">Swasta</option>
+                    </select>
+                </div>
+
+                <!-- Nama Sekolah -->
+                <div class="lg:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Nama Satuan Pendidikan</label>
+                    <input type="text" id="school-name" value="SMPN 2 CIGEDUG" oninput="updateConfig()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition">
+                </div>
+
+                <!-- Jumlah Peserta Didik -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Jml Peserta Didik</label>
+                    <div class="relative">
+                        <input type="number" id="student-count" value="590" min="1" oninput="updateConfig()" class="w-full rounded-xl border border-primary-300 bg-primary-50/40 px-3.5 py-2.5 text-sm font-bold text-primary-900 focus:ring-2 focus:ring-primary-500 outline-none transition">
+                        <span class="absolute right-3 top-2.5 text-xs font-medium text-slate-400">Siswa</span>
+                    </div>
+                </div>
+
+                <!-- Satuan Biaya BOSP per Siswa -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Indeks BOSP / Siswa</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-xs font-semibold text-slate-500">Rp</span>
+                        <input type="number" id="unit-cost" value="1100000" step="10000" min="0" oninput="updateConfig()" class="w-full rounded-xl border border-slate-300 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-primary-500 outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pengaturan Tambahan: Dana Kinerja / Sisa Tahun Lalu & Pejabat Penandatangan -->
+            <div class="mt-4 pt-4 border-t border-slate-100">
+                <button type="button" onclick="toggleSignatoryPanel()" class="text-xs font-semibold text-slate-600 hover:text-primary-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-signature text-primary-600"></i>
+                    <span>Pengaturan Pejabat Penandatangan & Dana Tambahan / Kinerja (Klik untuk atur)</span>
+                    <i id="sig-chevron" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+                <div id="signatory-panel" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Tambahan Dana Kinerja / SiLPA (Rp)</label>
+                        <input type="number" id="extra-fund" value="0" min="0" step="10000" oninput="updateConfig()" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 font-semibold bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Kabupaten / Kota & Tanggal</label>
+                        <input type="text" id="doc-city" value="Garut, Desember 2026" oninput="saveToLocalStorage()" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Nama Kepala Sekolah</label>
+                        <input type="text" id="headmaster-name" placeholder="Nama & Gelar Kepala Sekolah" oninput="saveToLocalStorage()" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">NIP Kepala Sekolah (Kosongkan jika Swasta)</label>
+                        <input type="text" id="headmaster-nip" placeholder="NIP. 197XXXXXXXXXXXX" oninput="saveToLocalStorage()" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Nama Bendahara BOSP</label>
+                        <input type="text" id="treasurer-name" placeholder="Nama & Gelar Bendahara" oninput="saveToLocalStorage()" class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner Info Regulasi Status & Jenjang Sekolah -->
+            <div id="status-regulation-banner" class="mt-4 p-3.5 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3 text-xs text-blue-900">
+                <!-- Diisi dinamis sesuai jenjang & status -->
+            </div>
+        </section>
+
+        <!-- Kartu Ringkasan Keuangan & Monitoring 3 Batas Persentase Regulasi (Permendikdasmen No. 8/2026) -->
+        <section class="space-y-4">
+            <!-- Baris 1: Pagu, Terinput, Sisa Pagu -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Total Pagu BOSP -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Pagu BOSP TA 2027</span>
+                        <div class="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h3 id="kpi-total-pagu" class="text-xl sm:text-2xl font-bold text-slate-900">Rp 649.000.000</h3>
+                        <p id="kpi-pagu-desc" class="text-xs text-slate-500 mt-1">590 Siswa × Rp 1.100.000</p>
+                    </div>
+                </div>
+
+                <!-- Total Teranggarkan -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total RKAS Terinput</span>
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h3 id="kpi-total-budgeted" class="text-xl sm:text-2xl font-bold text-emerald-600">Rp 0</h3>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
+                            <div id="kpi-budget-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sisa Pagu / Selisih -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sisa Pagu Anggaran</span>
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h3 id="kpi-remaining-budget" class="text-xl sm:text-2xl font-bold text-slate-800">Rp 0</h3>
+                        <p id="kpi-remaining-status" class="text-xs text-slate-500 mt-1">Status keseimbangan anggaran</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Baris 2: 3 Kontrol Batas Persentase Penggunaan Dana (Sesuai Panduan BOSP Permendikdasmen No. 8/2026) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- 1. Pengembangan Perpustakaan / Penyediaan Buku (MINIMAL 10%) -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-l-orange-500 border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span id="kpi-book-title" class="text-xs font-bold text-orange-700 uppercase tracking-wider">1. Perpustakaan & Buku</span>
+                        <span id="kpi-book-rule-badge" class="bg-orange-100 text-orange-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">Wajib Min. 10%</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-baseline justify-between">
+                            <h3 id="kpi-book-percent" class="text-xl font-bold text-slate-800">0%</h3>
+                            <span id="kpi-book-status-badge" class="text-[11px] font-semibold text-emerald-600">Memenuhi Syarat</span>
+                        </div>
+                        <p id="kpi-book-amount" class="text-xs text-slate-500 mt-1">Rp 0 (Min: Rp 64.900.000)</p>
+                    </div>
+                </div>
+
+                <!-- 2. Pemeliharaan Sarana dan Prasarana (MAKSIMAL 20%) -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-l-emerald-600 border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">2. Pemeliharaan Sarpras</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">Maks. 20%</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-baseline justify-between">
+                            <h3 id="kpi-sarpras-percent" class="text-xl font-bold text-slate-800">0%</h3>
+                            <span id="kpi-sarpras-status-badge" class="text-[11px] font-semibold text-emerald-600">Aman</span>
+                        </div>
+                        <p id="kpi-sarpras-amount" class="text-xs text-slate-500 mt-1">Rp 0 (Maks: Rp 129.800.000)</p>
+                    </div>
+                </div>
+
+                <!-- 3. Pembayaran Honor (MAKS. 20% NEGERI / MAKS. 40% SWASTA) -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-l-purple-600 border border-slate-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-purple-800 uppercase tracking-wider">3. Pembayaran Honor</span>
+                        <span id="kpi-honor-limit-badge" class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full">Maks. 20% (Negeri)</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex items-baseline justify-between">
+                            <h3 id="kpi-honor-percent" class="text-xl font-bold text-slate-800">0%</h3>
+                            <span id="kpi-honor-status-badge" class="text-[11px] font-semibold text-emerald-600">Aman</span>
+                        </div>
+                        <p id="kpi-honor-amount" class="text-xs text-slate-500 mt-1">Rp 0 (Maks: Rp 129.800.000)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Baris 3: Monitoring Distribusi Pencairan Tahap 1 (Jan-Jun) & Tahap 2 (Jul-Des) -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <div class="flex items-center justify-between border-b md:border-b-0 md:border-r border-slate-100 pb-3 md:pb-0 md:pr-4">
+                    <div>
+                        <span class="text-[11px] font-bold text-primary-700 uppercase tracking-wider">Rencana Belanja Tahap I (Jan – Jun)</span>
+                        <p class="text-[11px] text-slate-500">Batas lapor: 31 Juli | Acuan Pagu Tahap I (±50%)</p>
+                    </div>
+                    <div class="text-right">
+                        <div id="kpi-tahap1-amount" class="text-sm sm:text-base font-bold text-slate-800">Rp 0</div>
+                        <span id="kpi-tahap1-pct" class="text-[11px] font-semibold text-primary-600">0% dari Pagu</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between md:pl-2">
+                    <div>
+                        <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Rencana Belanja Tahap II (Jul – Des)</span>
+                        <p class="text-[11px] text-slate-500">Batas lapor: 31 Jan tahun berikutnya | Acuan Pagu Tahap II (±50%)</p>
+                    </div>
+                    <div class="text-right">
+                        <div id="kpi-tahap2-amount" class="text-sm sm:text-base font-bold text-slate-800">Rp 0</div>
+                        <span id="kpi-tahap2-pct" class="text-[11px] font-semibold text-emerald-600">0% dari Pagu</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panduan Pendampingan Pengawas Sekolah & Rekomendasi PBD Sesuai Jenjang -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <button onclick="togglePbdPanel()" class="w-full px-5 py-4 bg-slate-50/80 hover:bg-slate-100/80 flex items-center justify-between text-left transition">
+                <div class="flex items-center gap-3">
+                    <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">PANDUAN PENGAWAS & PBD</span>
+                    <div>
+                        <h3 id="pbd-panel-title" class="text-sm font-bold text-slate-800">Checklist Supervisi Pengawas Sekolah & Indikator Prioritas PBD</h3>
+                        <p class="text-xs text-slate-500">Panduan langkah demi langkah mendampingi sekolah binaan menyusun RKAS BOSP (Klik untuk buka/tutup)</p>
+                    </div>
+                </div>
+                <i id="pbd-chevron" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+            </button>
+            <div id="pbd-panel-content" class="hidden p-5 border-t border-slate-200 bg-white space-y-4">
+                <!-- 4 Langkah Pendampingan Pengawas -->
+                <div class="bg-primary-50/60 border border-primary-200 rounded-xl p-4">
+                    <h4 class="text-xs font-bold text-primary-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-tie text-primary-600"></i> 4 Langkah Supervisi Pengawas dalam Pemetaan RKAS BOSP:
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-lg border border-primary-100">
+                            <span class="font-bold text-primary-800 block mb-1">1. Kunci Pagu & Dapodik</span>
+                            <p class="text-slate-600">Pastikan jumlah siswa sesuai <em>cut-off</em> Dapodik 31 Agustus. Cek total pagu agar belanja tidak melebihi pagu (tidak minus).</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-primary-100">
+                            <span class="font-bold text-primary-800 block mb-1">2. Validasi 3 Batas Wajib</span>
+                            <p class="text-slate-600">Cek 3 kartu indikator: Buku Min. 10% (Dikdasmen), Pemeliharaan Maks. 20%, dan Honor Maks. 20% (Negeri) / 40% (Swasta).</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-primary-100">
+                            <span class="font-bold text-primary-800 block mb-1">3. Peta Pencairan 2 Tahap</span>
+                            <p class="text-slate-600">Pastikan rencana belanja Jan–Jun tidak melebihi ±50% pagu agar kas sekolah aman sebelum pencairan Tahap II di bulan Juli.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-primary-100">
+                            <span class="font-bold text-primary-800 block mb-1">4. Cek Syarat Honorer</span>
+                            <p class="text-slate-600">Verifikasi penerima honor: wajib Non-ASN, tercatat Dapodik, memiliki NUPTK (bagi guru), dan belum menerima TPG.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kartu Indikator Rapor PBD per Jenjang -->
+                <div id="pbd-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <!-- Diisi dinamis sesuai jenjang -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter & Pencarian Tabel RKAS -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800">Rincian Kertas Kerja RKAS Tahun Anggaran 2027</h2>
+                    <p id="table-subtitle" class="text-xs text-slate-500">Menampilkan 12 Komponen BOS Reguler, kode rekening belanja, uraian, satuan, serta distribusi anggaran per bulan.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <!-- Filter Komponen BOSP (Dinamis 12 Komponen Dikdasmen / 10 Komponen PAUD & Kesetaraan) -->
+                    <select id="filter-komponen" onchange="renderTable()" class="rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 bg-white focus:ring-2 focus:ring-primary-500 outline-none max-w-xs">
+                        <!-- Diisi dinamis oleh JS -->
+                    </select>
+
+                    <!-- Input Pencarian -->
+                    <div class="relative">
+                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="search-input" onkeyup="renderTable()" placeholder="Cari uraian / rekening..." class="w-full sm:w-56 rounded-xl border border-slate-300 pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Utama RKAS (Responsif Horizontal Scroll) -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-3 text-center w-10 sticky left-0 bg-slate-100 z-10">No</th>
+                            <th class="py-3 px-3 min-w-[200px]">Komponen BOSP / Kegiatan</th>
+                            <th class="py-3 px-3 min-w-[145px]">Rekening / Pos Belanja</th>
+                            <th class="py-3 px-3 min-w-[220px]">Uraian Komponen</th>
+                            <th class="py-3 px-3 text-center min-w-[90px]">Vol & Satuan</th>
+                            <th class="py-3 px-3 text-right min-w-[120px]">Harga Satuan</th>
+                            <th class="py-3 px-3 text-right min-w-[130px] bg-primary-50/70 text-primary-900">Jumlah Total</th>
+                            <!-- Kolom Per Bulan -->
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Jan</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Feb</th>
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Mar</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Apr</th>
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Mei</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Jun</th>
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Jul</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Agu</th>
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Sep</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Okt</th>
+                            <th class="py-3 px-2 text-right min-w-[95px] bg-slate-50">Nov</th>
+                            <th class="py-3 px-2 text-right min-w-[95px]">Des</th>
+                            <th class="py-3 px-3 text-center w-24 sticky right-0 bg-slate-100 z-10 shadow-l">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rkas-table-body" class="divide-y divide-slate-200 text-xs text-slate-700">
+                        <!-- Baris data akan dirender melalui JavaScript -->
+                    </tbody>
+                    <tfoot id="rkas-table-foot" class="bg-slate-800 text-white text-xs font-bold">
+                        <!-- Baris total bulanan dan keseluruhan -->
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Aplikasi -->
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-4 border-t border-slate-200 text-center text-xs text-slate-500 no-print">
+        <p class="font-medium text-slate-600">Sistem Penyusunan RKAS BOSP Universal TA 2027 &bull; Mengacu pada Permendikdasmen Nomor 8 Tahun 2026</p>
+        <p class="mt-1">Pengembang: <span class="font-bold text-primary-700">IFS</span></p>
+    </footer>
+
+    <!-- MODAL TAMBAH / EDIT KEGIATAN RKAS -->
+    <div id="item-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden my-8">
+            <div class="bg-primary-800 text-white px-6 py-4 flex items-center justify-between">
+                <h3 id="modal-title" class="text-base sm:text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Tambah Rincian Kegiatan RKAS</span>
+                </h3>
+                <button onclick="closeItemModal()" class="text-white/80 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="rkas-form" onsubmit="saveItem(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <input type="hidden" id="edit-id">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Komponen BOSP Reguler (Dinamis sesuai jenjang) -->
+                    <div>
+                        <label id="modal-komponen-label" class="block text-xs font-semibold text-slate-700 mb-1">Komponen BOSP (Permendikdasmen 8/2026) *</label>
+                        <select id="form-kegiatan" required onchange="checkHonorCategory()" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium focus:ring-2 focus:ring-primary-500 outline-none bg-white">
+                            <!-- Diisi dinamis sesuai jenjang -->
+                        </select>
+                    </div>
+
+                    <!-- Kode Rekening / Pos Belanja -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kode Rekening / Pos Belanja *</label>
+                        <input list="rekening-list" id="form-rekening" required oninput="checkHonorCategory()" placeholder="Pilih atau ketik kode rekening / pos..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium focus:ring-2 focus:ring-primary-500 outline-none bg-white">
+                        <datalist id="rekening-list">
+                            <option value="5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)">
+                            <option value="5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan">
+                            <option value="5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan">
+                            <option value="5.1.02.01.01.0036 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat/Bahan Pembersih & Kesehatan">
+                            <option value="5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)">
+                            <option value="5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet">
+                            <option value="5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras">
+                            <option value="5.1.02.04.01.0003 - Belanja Perjalanan Dinas Dalam Daerah">
+                            <option value="5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan">
+                            <option value="5.2.02.10.01.0002 - Belanja Modal Peralatan Komputer / TIK & Multimedia">
+                            <option value="5.2.02.05.02.0001 - Belanja Modal Alat Peraga Edukatif (APE) / Praktik Kejuruan">
+                        </datalist>
+                    </div>
+                </div>
+
+                <!-- Peringatan Honorer jika dipilih -->
+                <div id="modal-honor-alert" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                    <span id="modal-honor-alert-text">Item ini terdeteksi sebagai <strong>Belanja Honorer</strong>. Pastikan penerima bukan ASN, tercatat di Dapodik, dan belum menerima TPG.</span>
+                </div>
+
+                <!-- Uraian Komponen -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Uraian Detail Komponen Belanja *</label>
+                    <input type="text" id="form-uraian" required placeholder="Contoh: Pengadaan Buku Pengayaan Literasi & Numerasi Perpustakaan" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
+                </div>
+
+                <!-- Satuan & Harga Satuan -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Satuan *</label>
+                        <input type="text" id="form-satuan" required placeholder="Paket / Rim / OB / Eksemplar / Siswa" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Harga Satuan (Rp) *</label>
+                        <input type="number" id="form-harga" required min="1" oninput="recalcModalTotal()" placeholder="0" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Integrasi Jumlah Siswa?</label>
+                        <select id="form-scale-mode" onchange="applyStudentScale()" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs bg-slate-50 focus:ring-2 focus:ring-primary-500 outline-none">
+                            <option value="MANUAL">Volume Tetap (Manual)</option>
+                            <option value="PER_SISWA_1X">Otomatis 1x Jumlah Siswa (Tahunan)</option>
+                            <option value="PER_SISWA_2X">Otomatis 2x Jumlah Siswa (Semesteran)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Distribusi Volume Per Bulan -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                        <span class="text-xs font-bold text-slate-700">Distribusi Volume Rincian Per Bulan (TA 2027)</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="fillMonths('ALL_1')" class="text-[11px] bg-white border border-slate-300 hover:bg-slate-100 px-2 py-1 rounded-lg font-medium">Isi 1 Tiap Bulan</button>
+                            <button type="button" onclick="fillMonths('TW1')" class="text-[11px] bg-white border border-slate-300 hover:bg-slate-100 px-2 py-1 rounded-lg font-medium">Tahap 1 (Mar)</button>
+                            <button type="button" onclick="fillMonths('TW3')" class="text-[11px] bg-white border border-slate-300 hover:bg-slate-100 px-2 py-1 rounded-lg font-medium">Tahap 2 (Agu)</button>
+                            <button type="button" onclick="fillMonths('CLEAR')" class="text-[11px] bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 px-2 py-1 rounded-lg font-medium">Kosongkan</button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Januari</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Februari</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Maret</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">April</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Mei</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Juni</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Juli</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Agustus</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">September</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Oktober</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">November</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Desember</label>
+                            <input type="number" min="0" value="0" oninput="recalcModalTotal()" class="month-vol-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-center font-semibold">
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+                        <span>Total Volume: <strong id="modal-total-vol" class="text-primary-700">0</strong></span>
+                        <span>Total Anggaran Item: <strong id="modal-total-rupiah" class="text-base text-emerald-700">Rp 0</strong></span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeItemModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold shadow-sm transition">Simpan Rincian RKAS</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI HAPUS -->
+    <div id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-lg font-bold text-center text-slate-800">Hapus Rincian Kegiatan?</h3>
+            <p class="text-xs text-center text-slate-500 mt-2">Data komponen anggaran yang dihapus akan langsung memperbarui perhitungan sisa pagu RKAS TA 2027.</p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50">Batal</button>
+                <button id="confirm-delete-btn" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREVIEW & EKSPOR DOKUMEN (PDF / WORD / GOOGLE DOCS) -->
+    <div id="preview-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[92vh] flex flex-col overflow-hidden">
+            <!-- Toolbar Ekspor -->
+            <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 no-print">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-amber-400"></i>
+                    <span class="font-bold text-sm">Preview Dokumen Resmi RKAS TA 2027</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="printPDF()" class="bg-red-600 hover:bg-red-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF
+                    </button>
+                    <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-file-word"></i> Unduh Format Word (.doc)
+                    </button>
+                    <button onclick="copyForGoogleDocs()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-brands fa-google-drive"></i> Salin ke Google Dokumen
+                    </button>
+                    <button onclick="closePreviewModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-xs font-semibold ml-1">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Area Dokumen Siap Cetak -->
+            <div class="flex-1 overflow-auto p-6 sm:p-10 bg-slate-100">
+                <div id="print-area" class="bg-white shadow-md mx-auto p-6 sm:p-8 max-w-[1100px] text-black">
+                    <!-- Konten Dokumen RKAS diisi secara dinamis oleh JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * KONFIGURASI REFERENSI JENJANG BOSP (PERMENDIKDASMEN NO. 8 TAHUN 2026)
+         */
+        const LEVEL_CONFIG = {
+            PAUD: {
+                label: "BOP PAUD Reguler",
+                defaultUnitCost: 600000,
+                defaultStudents: 65,
+                hasMinBook10: false,
+                bookTitle: "1. Buku & APE PAUD",
+                bookRuleLabel: "Sesuai Kebutuhan",
+                komponen: [
+                    "1. Penerimaan peserta didik baru",
+                    "2. Pengembangan perpustakaan / penyediaan buku bacaan anak",
+                    "3. Pelaksanaan kegiatan pembelajaran dan bermain",
+                    "4. Pelaksanaan evaluasi/asesmen perkembangan anak",
+                    "5. Pelaksanaan administrasi kegiatan satuan pendidikan",
+                    "6. Pengembangan profesi pendidik dan tenaga kependidikan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Penyelenggaraan kegiatan kesehatan, gizi, dan kebersihan",
+                    "10. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Kualitas Lingkungan Belajar (E.1)", badge: "Prioritas PAUD", color: "amber", desc: "Penguatan pembelajaran berbasis bermain-belajar bermakna, pengadaan Alat Peraga Edukatif (APE), dan buku cerita bergambar." },
+                    { title: "2. Kemitraan dengan Orang Tua", badge: "Parenting", color: "amber", desc: "Penyelenggaraan kelas orang tua (parenting) untuk keselarasan stimulasi tumbuh kembang anak di rumah dan satuan PAUD." },
+                    { title: "3. Kesehatan, Gizi, & UKS", badge: "Wajib PAUD", color: "emerald", desc: "Deteksi dini tumbuh kembang anak (DDTK), pemberian makanan tambahan (PMT) sehat berkala, dan sanitasi ramah anak." }
+                ]
+            },
+            SD: {
+                label: "BOS Reguler SD",
+                defaultUnitCost: 900000,
+                defaultStudents: 240,
+                hasMinBook10: true,
+                bookTitle: "1. Perpustakaan & Buku",
+                bookRuleLabel: "Wajib Min. 10%",
+                komponen: [
+                    "1. Penerimaan murid baru",
+                    "2. Pengembangan perpustakaan",
+                    "3. Pembelajaran dan ekstrakurikuler",
+                    "4. Asesmen dan evaluasi pembelajaran",
+                    "5. Administrasi kegiatan sekolah",
+                    "6. Pengembangan profesi guru dan tenaga kependidikan",
+                    "7. Langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Alat multimedia pembelajaran",
+                    "10. Peningkatan kompetensi keahlian",
+                    "11. Dukungan keterserapan lulusan",
+                    "12. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Kemampuan Literasi (A.1)", badge: "Prioritas SD", color: "amber", desc: "Penguatan fondasi membaca melalui penyediaan buku bacaan bermutu berjenjang dan pojok baca di setiap ruang kelas." },
+                    { title: "2. Kemampuan Numerasi (A.2)", badge: "Prioritas SD", color: "amber", desc: "Penggunaan benda konkret/alat peraga matematika dasar dan penguatan Kombel guru kelas." },
+                    { title: "3. Iklim Keamanan & Inklusivitas", badge: "PPKSP", color: "emerald", desc: "Pencegahan perundungan sejak dini, pembiasaan karakter Profil Pelajar Pancasila, dan pemeliharaan sanitasi sekolah." }
+                ]
+            },
+            SMP: {
+                label: "BOS Reguler SMP",
+                defaultUnitCost: 1100000,
+                defaultStudents: 590,
+                hasMinBook10: true,
+                bookTitle: "1. Perpustakaan & Buku",
+                bookRuleLabel: "Wajib Min. 10%",
+                komponen: [
+                    "1. Penerimaan murid baru",
+                    "2. Pengembangan perpustakaan",
+                    "3. Pembelajaran dan ekstrakurikuler",
+                    "4. Asesmen dan evaluasi pembelajaran",
+                    "5. Administrasi kegiatan sekolah",
+                    "6. Pengembangan profesi guru dan tenaga kependidikan",
+                    "7. Langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Alat multimedia pembelajaran",
+                    "10. Peningkatan kompetensi keahlian",
+                    "11. Dukungan keterserapan lulusan",
+                    "12. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Kemampuan Literasi (A.1)", badge: "66,67% (Sedang)", color: "amber", desc: "Penguatan kompetensi membaca teks informasi & sastra melalui pengayaan koleksi buku non-teks perpustakaan (Min. 10%) dan IHT guru." },
+                    { title: "2. Kemampuan Numerasi (A.2)", badge: "62,22% (Sedang)", color: "amber", desc: "Peningkatan domain aljabar & geometri melalui alat peraga matematika, pelatihan numerasi lintas mapel, dan penguatan Kombel." },
+                    { title: "3. Kualitas Pembelajaran & Iklim", badge: "Baik (64 - 77)", color: "emerald", desc: "Mempertahankan iklim keamanan, inklusivitas (PPKSP/Anti-Perundungan), supervisi akademik, dan digitalisasi pembelajaran." }
+                ]
+            },
+            SMA: {
+                label: "BOS Reguler SMA",
+                defaultUnitCost: 1500000,
+                defaultStudents: 720,
+                hasMinBook10: true,
+                bookTitle: "1. Perpustakaan & Buku",
+                bookRuleLabel: "Wajib Min. 10%",
+                komponen: [
+                    "1. Penerimaan murid baru",
+                    "2. Pengembangan perpustakaan",
+                    "3. Pembelajaran dan ekstrakurikuler",
+                    "4. Asesmen dan evaluasi pembelajaran",
+                    "5. Administrasi kegiatan sekolah",
+                    "6. Pengembangan profesi guru dan tenaga kependidikan",
+                    "7. Langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Alat multimedia pembelajaran",
+                    "10. Peningkatan kompetensi keahlian",
+                    "11. Dukungan keterserapan lulusan",
+                    "12. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Penalaran Kritis & Literasi", badge: "Prioritas SMA", color: "amber", desc: "Pengayaan literasi digital, bahan praktik laboratorium IPA/IPS/Bahasa, dan pembinaan Olimpiade Sains (OSN)." },
+                    { title: "2. Numerasi & Riset Siswa", badge: "Prioritas SMA", color: "amber", desc: "Penguatan pembelajaran berbasis proyek (PjBL), karya tulis ilmiah remaja, dan persiapan TKA/SNBP/SNBT." },
+                    { title: "3. Tata Kelola & Digitalisasi", badge: "Optimal", color: "emerald", desc: "Pemeliharaan laboratorium komputer/TIK untuk asesmen nasional dan penguatan komunitas belajar MGMP sekolah." }
+                ]
+            },
+            SMK: {
+                label: "BOS Reguler SMK",
+                defaultUnitCost: 1600000,
+                defaultStudents: 850,
+                hasMinBook10: true,
+                bookTitle: "1. Perpustakaan & Buku",
+                bookRuleLabel: "Wajib Min. 10%",
+                komponen: [
+                    "1. Penerimaan murid baru",
+                    "2. Pengembangan perpustakaan",
+                    "3. Pembelajaran dan ekstrakurikuler",
+                    "4. Asesmen dan evaluasi pembelajaran",
+                    "5. Administrasi kegiatan sekolah",
+                    "6. Pengembangan profesi guru dan tenaga kependidikan",
+                    "7. Langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Alat multimedia pembelajaran",
+                    "10. Peningkatan kompetensi keahlian",
+                    "11. Dukungan keterserapan lulusan",
+                    "12. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Peningkatan Kompetensi Keahlian", badge: "Komponen 10", color: "amber", desc: "Penyelenggaraan Uji Kompetensi Keahlian (UKK), sertifikasi LSP/industri, dan bahan habis pakai praktik bengkel/lab kejuruan." },
+                    { title: "2. Dukungan Keterserapan Lulusan", badge: "Komponen 11", color: "amber", desc: "Penguatan Bursa Kerja Khusus (BKK), penelusuran tamatan (tracer study), dan sinkronisasi kurikulum bersama DUDIKA." },
+                    { title: "3. Literasi, Numerasi & Karakter Kerja", badge: "PBD SMK", color: "emerald", desc: "Penguatan budaya kerja industri (5R/K3), literasi teknis kejuruan, dan magang guru produktif di industri." }
+                ]
+            },
+            SLB: {
+                label: "BOS Reguler SLB",
+                defaultUnitCost: 3500000,
+                defaultStudents: 80,
+                hasMinBook10: true,
+                bookTitle: "1. Perpustakaan & Buku",
+                bookRuleLabel: "Wajib Min. 10%",
+                komponen: [
+                    "1. Penerimaan murid baru",
+                    "2. Pengembangan perpustakaan",
+                    "3. Pembelajaran dan ekstrakurikuler",
+                    "4. Asesmen dan evaluasi pembelajaran",
+                    "5. Administrasi kegiatan sekolah",
+                    "6. Pengembangan profesi guru dan tenaga kependidikan",
+                    "7. Langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Alat multimedia pembelajaran",
+                    "10. Peningkatan kompetensi keahlian",
+                    "11. Dukungan keterserapan lulusan",
+                    "12. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Pembelajaran Adaptif & Aksesibel", badge: "Prioritas SLB", color: "amber", desc: "Penyediaan buku huruf Braille, media pembelajaran visual/audio adaptif, dan alat bantu pembelajaran kebutuhan khusus." },
+                    { title: "2. Keterampilan Vokasional & Kemandirian", badge: "Komponen 10 & 11", color: "amber", desc: "Pelatihan keterampilan vokasional siswa berkebutuhan khusus dan dukungan kemandirian pasca lulus." },
+                    { title: "3. Sarpras Ramah Disabilitas", badge: "Aksesibilitas", color: "emerald", desc: "Pemeliharaan fasilitas aksesibilitas sekolah dan peningkatan kompetensi guru pendidikan khusus." }
+                ]
+            },
+            KESETARAAN: {
+                label: "BOP Kesetaraan (Paket A/B/C)",
+                defaultUnitCost: 1500000,
+                defaultStudents: 120,
+                hasMinBook10: false,
+                bookTitle: "1. Modul & Buku Bacaan",
+                bookRuleLabel: "Sesuai Kebutuhan",
+                komponen: [
+                    "1. Penerimaan peserta didik baru",
+                    "2. Pengembangan perpustakaan / penyediaan modul belajar",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan evaluasi/asesmen pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan satuan pendidikan",
+                    "6. Pengembangan profesi pendidik dan tenaga kependidikan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Pembayaran honor"
+                ],
+                pbdCards: [
+                    { title: "1. Pengadaan Modul & Bahan Ajar", badge: "Prioritas PKBM/SKB", color: "amber", desc: "Pengadaan modul pembelajaran mandiri/tutorial Paket A, B, dan C serta bahan bacaan literasi fungsional." },
+                    { title: "2. Pemberdayaan & Keterampilan", badge: "Vokasional", color: "amber", desc: "Pembelajaran keterampilan hidup (life skills) dan kewirausahaan bagi warga belajar kesetaraan." },
+                    { title: "3. Asesmen & Pendataan Dapodik", badge: "Tata Kelola", color: "emerald", desc: "Pelaksanaan ANBK kesetaraan, ujian pendidikan kesetaraan, dan pemutakhiran data warga belajar." }
+                ]
+            }
+        };
+
+        /**
+         * DATA AWAL RKAS SMPN 2 CIGEDUG TA 2027 (590 SISWA)
+         */
+        const initialRkasData = [
+            {
+                id: 1,
+                kegiatan: "1. Penerimaan murid baru",
+                rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                uraian: "Pelaksanaan SPMB (Sistem Penerimaan Murid Baru), MPLS, & Sosialisasi Pencegahan Kekerasan (PPKSP)",
+                satuan: "Paket",
+                harga: 12000000,
+                scaleMode: "MANUAL",
+                months: [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0]
+            },
+            {
+                id: 2,
+                kegiatan: "2. Pengembangan perpustakaan",
+                rekening: "5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan",
+                uraian: "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Literasi/Numerasi (Wajib Min. 10% Pagu)",
+                satuan: "Paket",
+                harga: 35000000,
+                scaleMode: "MANUAL",
+                months: [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+            },
+            {
+                id: 3,
+                kegiatan: "3. Pembelajaran dan ekstrakurikuler",
+                rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                uraian: "Pengadaan Bahan Praktik Pembelajaran, Media Literasi Numerasi Kelas, & Penyusunan KSP",
+                satuan: "Siswa/Thn",
+                harga: 120000,
+                scaleMode: "PER_SISWA_1X",
+                months: [0, 0, 295, 0, 0, 0, 0, 295, 0, 0, 0, 0]
+            },
+            {
+                id: 4,
+                kegiatan: "3. Pembelajaran dan ekstrakurikuler",
+                rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                uraian: "Pelaksanaan Kegiatan Ekstrakurikuler, Lomba Literasi, Numerasi, & OSN/O2SN Siswa",
+                satuan: "Siswa/Thn",
+                harga: 85000,
+                scaleMode: "PER_SISWA_1X",
+                months: [0, 150, 0, 145, 0, 0, 0, 150, 0, 145, 0, 0]
+            },
+            {
+                id: 5,
+                kegiatan: "4. Asesmen dan evaluasi pembelajaran",
+                rekening: "5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan",
+                uraian: "Penggandaan Naskah Asesmen Sumatif Tengah/Akhir Semester, ANBK, & Rapor Siswa",
+                satuan: "Siswa/Smt",
+                harga: 75000,
+                scaleMode: "PER_SISWA_2X",
+                months: [0, 0, 590, 0, 0, 0, 0, 0, 590, 0, 0, 0]
+            },
+            {
+                id: 6,
+                kegiatan: "5. Administrasi kegiatan sekolah",
+                rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                uraian: "Pengadaan ATK Perkantoran, Tinta Printer, Kertas HVS, & Administrasi Tata Usaha Sekolah",
+                satuan: "Bulan",
+                harga: 1500000,
+                scaleMode: "MANUAL",
+                months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                id: 7,
+                kegiatan: "5. Administrasi kegiatan sekolah",
+                rekening: "5.1.02.04.01.0003 - Belanja Perjalanan Dinas Dalam Daerah",
+                uraian: "Transportasi Koordinasi Pelaporan BOSP (Tenggat 31 Juli & 31 Jan), Rekonsiliasi Aset, & Rapat Dinas",
+                satuan: "Kali",
+                harga: 1250000,
+                scaleMode: "MANUAL",
+                months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                id: 8,
+                kegiatan: "6. Pengembangan profesi guru dan tenaga kependidikan",
+                rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                uraian: "Penguatan Komunitas Belajar (Kombel) & IHT Peningkatan Kompetensi Literasi-Numerasi Guru",
+                satuan: "Kegiatan",
+                harga: 2250000,
+                scaleMode: "MANUAL",
+                months: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+            },
+            {
+                id: 9,
+                kegiatan: "7. Langganan daya dan jasa",
+                rekening: "5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet",
+                uraian: "Pembayaran Langganan Daya Listrik, Air, dan Internet Sekolah",
+                satuan: "Bulan",
+                harga: 2800000,
+                scaleMode: "MANUAL",
+                months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            {
+                id: 10,
+                kegiatan: "8. Pemeliharaan sarana dan prasarana",
+                rekening: "5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras",
+                uraian: "Pemeliharaan Rutin Ruang Kelas, Sanitasi/Toilet Siswa, dan Perbaikan Meubelair (Maks. 20%)",
+                satuan: "Paket",
+                harga: 18500000,
+                scaleMode: "MANUAL",
+                months: [0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+            },
+            {
+                id: 11,
+                kegiatan: "9. Alat multimedia pembelajaran",
+                rekening: "5.2.02.10.01.0002 - Belanja Modal Peralatan Komputer / TIK & Multimedia",
+                uraian: "Pengadaan Perangkat Multimedia / Proyektor Pembelajaran & Chromebook Penunjang ANBK",
+                satuan: "Unit",
+                harga: 7500000,
+                scaleMode: "MANUAL",
+                months: [0, 0, 4, 0, 0, 0, 0, 4, 0, 0, 0, 0]
+            },
+            {
+                id: 12,
+                kegiatan: "12. Pembayaran honor",
+                rekening: "5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)",
+                uraian: "Honorarium Tenaga Kependidikan Non-ASN Ber-SK (Operator Dapodik/ARKAS & Penjaga Sekolah)",
+                satuan: "OB",
+                harga: 2500000,
+                scaleMode: "MANUAL",
+                months: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+            }
+        ];
+
+        // State Aplikasi
+        const STORAGE_KEY = 'rkas_bosp_universal_2027_v2';
+        let rkasItems = JSON.parse(JSON.stringify(initialRkasData));
+        let itemToDeleteId = null;
+
+        // Format Mata Uang Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(angka);
+        }
+
+        // Format Angka Ringkas untuk Kolom Bulanan
+        function formatNumberShort(angka) {
+            if (angka === 0) return "-";
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        // Notifikasi Toast
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-600' : (type === 'warning' ? 'bg-amber-600' : 'bg-red-600');
+            const icon = type === 'success' ? 'fa-circle-check' : (type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-xmark');
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- PENYIMPANAN LOKAL & BACKUP JSON ---
+        function saveToLocalStorage() {
+            const payload = {
+                level: document.getElementById('school-level').value,
+                status: document.getElementById('school-status').value,
+                schoolName: document.getElementById('school-name').value,
+                studentCount: document.getElementById('student-count').value,
+                unitCost: document.getElementById('unit-cost').value,
+                extraFund: document.getElementById('extra-fund').value,
+                docCity: document.getElementById('doc-city').value,
+                headmasterName: document.getElementById('headmaster-name').value,
+                headmasterNip: document.getElementById('headmaster-nip').value,
+                treasurerName: document.getElementById('treasurer-name').value,
+                items: rkasItems
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            } catch (e) {
+                console.warn("Gagal menyimpan ke localStorage:", e);
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.level) document.getElementById('school-level').value = data.level;
+                    if (data.status) document.getElementById('school-status').value = data.status;
+                    if (data.schoolName) document.getElementById('school-name').value = data.schoolName;
+                    if (data.studentCount) document.getElementById('student-count').value = data.studentCount;
+                    if (data.unitCost) document.getElementById('unit-cost').value = data.unitCost;
+                    if (data.extraFund !== undefined) document.getElementById('extra-fund').value = data.extraFund;
+                    if (data.docCity) document.getElementById('doc-city').value = data.docCity;
+                    if (data.headmasterName) document.getElementById('headmaster-name').value = data.headmasterName;
+                    if (data.headmasterNip) document.getElementById('headmaster-nip').value = data.headmasterNip;
+                    if (data.treasurerName) document.getElementById('treasurer-name').value = data.treasurerName;
+                    if (Array.isArray(data.items) && data.items.length > 0) {
+                        rkasItems = data.items;
+                    }
+                    return true;
+                }
+            } catch (e) {
+                console.warn("Gagal memuat dari localStorage:", e);
+            }
+            return false;
+        }
+
+        function exportJsonData() {
+            saveToLocalStorage();
+            const raw = localStorage.getItem(STORAGE_KEY);
+            const schoolName = document.getElementById('school-name').value || "Sekolah";
+            const blob = new Blob([raw], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Backup_RKAS_2027_${schoolName.replace(/\s+/g, '_')}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("File cadangan RKAS (.json) berhasil diunduh!");
+        }
+
+        function importJsonData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.items && Array.isArray(data.items)) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                        loadFromLocalStorage();
+                        populateKomponenDropdowns();
+                        updateConfig();
+                        showToast("Data RKAS berhasil dipulihkan dari file JSON!");
+                    } else {
+                        showToast("Format file JSON tidak valid.", "error");
+                    }
+                } catch (err) {
+                    showToast("Gagal membaca file JSON.", "error");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // --- PENYESUAIAN DINAMIS JENJANG PENDIDIKAN ---
+        function populateKomponenDropdowns() {
+            const level = document.getElementById('school-level').value;
+            const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
+            
+            const filterSelect = document.getElementById('filter-komponen');
+            const formSelect = document.getElementById('form-kegiatan');
+            const currentFilter = filterSelect.value;
+
+            filterSelect.innerHTML = `<option value="ALL">Semua ${cfg.komponen.length} Komponen ${cfg.label}</option>`;
+            formSelect.innerHTML = '';
+
+            cfg.komponen.forEach(komp => {
+                const opt1 = document.createElement('option');
+                opt1.value = komp;
+                opt1.textContent = komp;
+                filterSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = komp;
+                opt2.textContent = komp;
+                formSelect.appendChild(opt2);
+            });
+
+            if (Array.from(filterSelect.options).some(o => o.value === currentFilter)) {
+                filterSelect.value = currentFilter;
+            }
+
+            document.getElementById('table-subtitle').textContent = `Menampilkan ${cfg.komponen.length} Komponen ${cfg.label}, kode rekening/pos belanja, uraian, satuan, serta distribusi per bulan.`;
+            document.getElementById('modal-komponen-label').textContent = `${cfg.komponen.length} Komponen ${cfg.label} (Permendikdasmen 8/2026) *`;
+
+            // Render kartu PBD sesuai jenjang
+            const pbdContainer = document.getElementById('pbd-cards-container');
+            pbdContainer.innerHTML = cfg.pbdCards.map(c => {
+                const bg = c.color === 'amber' ? 'bg-amber-50/70 border-amber-200' : 'bg-emerald-50/70 border-emerald-200';
+                const titleColor = c.color === 'amber' ? 'text-amber-900' : 'text-emerald-900';
+                const badgeColor = c.color === 'amber' ? 'bg-amber-200 text-amber-900' : 'bg-emerald-200 text-emerald-900';
+                return `
+                    <div class="p-3.5 rounded-xl ${bg} border">
+                        <div class="font-bold ${titleColor} mb-1 flex items-center justify-between gap-2">
+                            <span>${c.title}</span>
+                            <span class="${badgeColor} px-2 py-0.5 rounded whitespace-nowrap">${c.badge}</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed">${c.desc}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleLevelChange() {
+            const level = document.getElementById('school-level').value;
+            const status = document.getElementById('school-status').value;
+            const cfg = LEVEL_CONFIG[level];
+            
+            document.getElementById('unit-cost').value = cfg.defaultUnitCost;
+            document.getElementById('student-count').value = cfg.defaultStudents;
+            document.getElementById('extra-fund').value = 0;
+            
+            if (level === 'SMP' && status === 'NEGERI') {
+                document.getElementById('school-name').value = "SMPN 2 CIGEDUG";
+                rkasItems = JSON.parse(JSON.stringify(initialRkasData));
+                populateKomponenDropdowns();
+                updateConfig();
+                showToast("Jenjang SMP Negeri dimuat dengan data SMPN 2 Cigedug.");
+            } else {
+                const levelLabelName = level === 'KESETARAAN' ? 'PKBM / SKB' : `${level} ${status === 'NEGERI' ? 'NEGERI' : 'SWASTA'}`;
+                document.getElementById('school-name').value = `${levelLabelName} BINAAN`;
+                populateKomponenDropdowns();
+                // Langsung muat & sesuaikan nominal template agar sinkron real-time dan tidak minus
+                loadPresetTemplate(true);
+            }
+        }
+
+        // Muat Contoh Template Anggaran Seimbang untuk Jenjang Aktif (Pas 100% Pagu)
+        function loadPresetTemplate(isAutoSwitch = false) {
+            const level = document.getElementById('school-level').value;
+            const status = document.getElementById('school-status').value;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 100);
+            const unitCost = Math.max(0, parseInt(document.getElementById('unit-cost').value) || 1000000);
+            const extraFund = Math.max(0, parseInt(document.getElementById('extra-fund').value) || 0);
+            const totalPagu = (studentCount * unitCost) + extraFund;
+            const cfg = LEVEL_CONFIG[level];
+
+            const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
+            const honorShare = status === 'NEGERI' ? 0.12 : 0.25; // Aman di bawah 20% Negeri / 40% Swasta
+
+            // Hitung alokasi per pos agar proporsional dan seimbang
+            const allocPpdb = Math.round(totalPagu * 0.04);
+            const allocBuku = Math.round(totalPagu * 0.06) * 2; // 12% (Aman >= 10%)
+            const allocAsesmenUnit = Math.floor((totalPagu * 0.12) / (studentCount * 2));
+            const allocAsesmenTotal = allocAsesmenUnit * studentCount * 2;
+            const allocAtkBln = Math.floor((totalPagu * 0.09) / 12);
+            const allocKombel = Math.floor((totalPagu * 0.06) / 4);
+            const allocDayaBln = Math.floor((totalPagu * 0.09) / 12);
+            const allocSarpras = Math.floor((totalPagu * 0.12) / 2);
+            const allocHonorBln = Math.floor((totalPagu * honorShare) / 12);
+
+            const usedWithoutPembelajaran = allocPpdb + allocBuku + allocAsesmenTotal + (allocAtkBln * 12) + (allocKombel * 4) + (allocDayaBln * 12) + (allocSarpras * 2) + (allocHonorBln * 12);
+            const remainingForPembelajaran = Math.max(studentCount * 1000, totalPagu - usedWithoutPembelajaran);
+            const pembPerSiswa = Math.floor(remainingForPembelajaran / studentCount);
+
+            rkasItems = [
+                {
+                    id: 1,
+                    kegiatan: cfg.komponen[0],
+                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                    uraian: `Pelaksanaan Penerimaan Peserta Didik Baru & Masa Pengenalan Lingkungan (${level})`,
+                    satuan: "Paket",
+                    harga: allocPpdb,
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    id: 2,
+                    kegiatan: cfg.komponen[1],
+                    rekening: "5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan",
+                    uraian: isPaudOrKesetaraan 
+                        ? "Pengadaan Modul Pembelajaran Paket A/B/C & Buku Bacaan Literasi-Numerasi" 
+                        : "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Perpustakaan (Memenuhi Min. 10%)",
+                    satuan: "Paket",
+                    harga: Math.round(allocBuku / 2),
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+                },
+                {
+                    id: 3,
+                    kegiatan: cfg.komponen[2],
+                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                    uraian: level === 'PAUD' 
+                        ? "Pengadaan Alat Peraga Edukatif (APE) & Bahan Kegiatan Bermain-Belajar Anak" 
+                        : (level === 'KESETARAAN' 
+                            ? "Pengadaan Bahan Praktik Tutorial, Keterampilan Hidup (Life Skills), & Pemberdayaan"
+                            : "Pengadaan Bahan Praktik Pembelajaran, Media Literasi-Numerasi, & Ekstrakurikuler"),
+                    satuan: "Siswa/Thn",
+                    harga: pembPerSiswa,
+                    scaleMode: "PER_SISWA_1X",
+                    months: [0, 0, Math.ceil(studentCount / 2), 0, 0, 0, 0, Math.floor(studentCount / 2), 0, 0, 0, 0]
+                },
+                {
+                    id: 4,
+                    kegiatan: cfg.komponen[3],
+                    rekening: "5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan",
+                    uraian: "Pelaksanaan Asesmen / Evaluasi Pembelajaran & Ujian Semester Ganjil/Genap",
+                    satuan: "Siswa/Smt",
+                    harga: allocAsesmenUnit,
+                    scaleMode: "PER_SISWA_2X",
+                    months: [0, 0, studentCount, 0, 0, 0, 0, 0, studentCount, 0, 0, 0]
+                },
+                {
+                    id: 5,
+                    kegiatan: cfg.komponen[4],
+                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                    uraian: "Pengadaan ATK Kantor, Administrasi Tata Usaha, Pendataan Dapodik, & Pelaporan BOSP",
+                    satuan: "Bulan",
+                    harga: allocAtkBln,
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                {
+                    id: 6,
+                    kegiatan: cfg.komponen[5],
+                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                    uraian: "Penguatan Komunitas Belajar (Kombel) & Peningkatan Kompetensi Pendidik/Tutor",
+                    satuan: "Kegiatan",
+                    harga: allocKombel,
+                    scaleMode: "MANUAL",
+                    months: [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+                },
+                {
+                    id: 7,
+                    kegiatan: cfg.komponen[6],
+                    rekening: "5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet",
+                    uraian: "Pembayaran Langganan Daya Listrik, Air, dan Internet Satuan Pendidikan",
+                    satuan: "Bulan",
+                    harga: allocDayaBln,
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                {
+                    id: 8,
+                    kegiatan: cfg.komponen[7],
+                    rekening: "5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras",
+                    uraian: "Pemeliharaan Rutin Ruang Belajar, Sanitasi/Toilet, dan Meubelair (Maks. 20%)",
+                    satuan: "Paket",
+                    harga: allocSarpras,
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
+                },
+                {
+                    id: 9,
+                    kegiatan: cfg.komponen[cfg.komponen.length - 1],
+                    rekening: "5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)",
+                    uraian: status === 'NEGERI' 
+                        ? "Honorarium Tenaga Kependidikan Non-ASN Ber-SK (Operator Dapodik & Penjaga Sekolah)" 
+                        : "Honorarium Pendidik/Tutor & Tenaga Kependidikan Non-ASN Tercatat Dapodik (Belum TPG)",
+                    satuan: "Bulan",
+                    harga: allocHonorBln,
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            ];
+
+            // Otomatis seimbangkan selisih pembulatan rupiah agar sisa pagu Rp 0
+            autoBalanceBudget(true);
+
+            if (isAutoSwitch) {
+                showToast(`Jenjang ${cfg.label} dimuat & nominal anggaran disesuaikan otomatis dengan pagu!`);
+            } else {
+                showToast(`Template RKAS ${cfg.label} (${status}) berhasil dimuat seimbang!`);
+            }
+        }
+
+        // Fungsi Penyeimbang Sisa Pagu Otomatis (Menghilangkan Pagu Minus / Sisa Pembulatan)
+        function autoBalanceBudget(silent = false) {
+            const level = document.getElementById('school-level').value;
+            const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 0);
+            const unitCost = Math.max(0, parseInt(document.getElementById('unit-cost').value) || 0);
+            const extraFund = Math.max(0, parseInt(document.getElementById('extra-fund').value) || 0);
+            const totalPagu = (studentCount * unitCost) + extraFund;
+
+            let grandTotal = 0;
+            rkasItems.forEach(item => {
+                const vol = item.months.reduce((a, b) => a + b, 0);
+                grandTotal += vol * item.harga;
+            });
+
+            const diff = totalPagu - grandTotal;
+            if (diff === 0) {
+                if (!silent) showToast("Anggaran sudah seimbang 100% (Sisa Pagu Rp 0).");
+                updateConfig();
+                return;
+            }
+
+            if (diff > 0) {
+                // Jika ada sisa pagu positif, tambahkan sebagai item penyeimbang di Komponen Pembelajaran (Komponen 3)
+                const existingAdj = rkasItems.find(i => i.isAutoBalance);
+                if (existingAdj) {
+                    existingAdj.harga += diff;
+                } else {
+                    const newId = rkasItems.length > 0 ? Math.max(...rkasItems.map(i => i.id)) + 1 : 1;
+                    rkasItems.push({
+                        id: newId,
+                        kegiatan: cfg.komponen[2],
+                        rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                        uraian: "Pengadaan Bahan Pendukung Pembelajaran & Penguatan Literasi-Numerasi (Penyeimbang Pagu)",
+                        satuan: "Paket",
+                        harga: diff,
+                        scaleMode: "MANUAL",
+                        isAutoBalance: true,
+                        months: [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+                    });
+                }
+                if (!silent) showToast(`Sisa pagu sebesar ${formatRupiah(diff)} berhasil dialokasikan agar pas 100%!`);
+            } else {
+                // Jika minus (belanja melebihi pagu), kurangi secara proporsional dari item non-honor/non-buku terlebih dahulu
+                const ratio = totalPagu / grandTotal;
+                rkasItems.forEach(item => {
+                    item.harga = Math.max(100, Math.floor(item.harga * ratio));
+                });
+                // Panggil ulang sekali lagi untuk menutup sisa pembulatan positif ke 0
+                autoBalanceBudget(true);
+                if (!silent) showToast("Nominal item belanja disesuaikan secara proporsional agar tidak melebihi pagu!");
+                return;
+            }
+
+            updateConfig();
+        }
+
+        // Muat Contoh Template Anggaran Seimbang untuk Jenjang Aktif
+        function loadPresetTemplate() {
+            const level = document.getElementById('school-level').value;
+            const status = document.getElementById('school-status').value;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 100);
+            const unitCost = Math.max(0, parseInt(document.getElementById('unit-cost').value) || 1000000);
+            const totalPagu = studentCount * unitCost;
+            const cfg = LEVEL_CONFIG[level];
+
+            const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
+            const honorShare = status === 'NEGERI' ? 0.10 : 0.25; // Aman di bawah 20% Negeri / 40% Swasta
+
+            rkasItems = [
+                {
+                    id: 1,
+                    kegiatan: cfg.komponen[0],
+                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                    uraian: `Pelaksanaan Penerimaan Murid/Peserta Didik Baru & Pengenalan Lingkungan Satuan Pendidikan (${level})`,
+                    satuan: "Paket",
+                    harga: Math.round(totalPagu * 0.03),
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+                },
+                {
+                    id: 2,
+                    kegiatan: cfg.komponen[1],
+                    rekening: "5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan",
+                    uraian: isPaudOrKesetaraan 
+                        ? "Pengadaan Buku Bacaan Anak / Modul Pembelajaran Literasi-Numerasi" 
+                        : "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Perpustakaan (Memenuhi Min. 10%)",
+                    satuan: "Paket",
+                    harga: Math.round(totalPagu * 0.055), // 2x = 11%
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+                },
+                {
+                    id: 3,
+                    kegiatan: cfg.komponen[2],
+                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                    uraian: level === 'PAUD' 
+                        ? "Pengadaan Alat Peraga Edukatif (APE) & Bahan Kegiatan Bermain-Belajar Anak" 
+                        : "Pengadaan Bahan Praktik Pembelajaran, Media Literasi-Numerasi, & Ekstrakurikuler",
+                    satuan: "Siswa/Thn",
+                    harga: Math.round((totalPagu * 0.28) / studentCount),
+                    scaleMode: "PER_SISWA_1X",
+                    months: [0, 0, Math.ceil(studentCount / 2), 0, 0, 0, 0, Math.floor(studentCount / 2), 0, 0, 0, 0]
+                },
+                {
+                    id: 4,
+                    kegiatan: cfg.komponen[3],
+                    rekening: "5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan",
+                    uraian: "Pelaksanaan Asesmen / Evaluasi Pembelajaran Semester Ganjil & Genap",
+                    satuan: "Siswa/Smt",
+                    harga: Math.round((totalPagu * 0.12) / (studentCount * 2)),
+                    scaleMode: "PER_SISWA_2X",
+                    months: [0, 0, studentCount, 0, 0, 0, 0, 0, studentCount, 0, 0, 0]
+                },
+                {
+                    id: 5,
+                    kegiatan: cfg.komponen[4],
+                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
+                    uraian: "Pengadaan ATK Kantor, Administrasi Tata Usaha, & Pelaporan BOSP",
+                    satuan: "Bulan",
+                    harga: Math.round((totalPagu * 0.08) / 12),
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                {
+                    id: 6,
+                    kegiatan: cfg.komponen[5],
+                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
+                    uraian: "Penguatan Komunitas Belajar (Kombel) & Peningkatan Kompetensi Pendidik/Tendik",
+                    satuan: "Kegiatan",
+                    harga: Math.round((totalPagu * 0.05) / 4),
+                    scaleMode: "MANUAL",
+                    months: [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]
+                },
+                {
+                    id: 7,
+                    kegiatan: cfg.komponen[6],
+                    rekening: "5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet",
+                    uraian: "Pembayaran Langganan Daya Listrik, Air, dan Internet Satuan Pendidikan",
+                    satuan: "Bulan",
+                    harga: Math.round((totalPagu * 0.08) / 12),
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                {
+                    id: 8,
+                    kegiatan: cfg.komponen[7],
+                    rekening: "5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras",
+                    uraian: "Pemeliharaan Rutin Ruang Belajar, Sanitasi/Toilet, dan Meubelair (Maks. 20%)",
+                    satuan: "Paket",
+                    harga: Math.round((totalPagu * 0.12) / 2),
+                    scaleMode: "MANUAL",
+                    months: [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
+                },
+                {
+                    id: 9,
+                    kegiatan: cfg.komponen[cfg.komponen.length - 1], // Selalu Komponen Pembayaran Honor
+                    rekening: "5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)",
+                    uraian: status === 'NEGERI' 
+                        ? "Honorarium Tenaga Kependidikan Non-ASN Ber-SK (Operator Dapodik & Penjaga Sekolah)" 
+                        : "Honorarium Pendidik & Tenaga Kependidikan Non-ASN Tercatat Dapodik (Belum TPG)",
+                    satuan: "Bulan",
+                    harga: Math.round((totalPagu * honorShare) / 12),
+                    scaleMode: "MANUAL",
+                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            ];
+
+            updateConfig();
+            showToast(`Template RKAS ${cfg.label} (${status}) berhasil dimuat!`);
+        }
+
+        // Sinkronisasi item yang volumenya bergantung pada jumlah siswa
+        function syncStudentScaledItems(newStudentCount) {
+            rkasItems.forEach(item => {
+                if (item.scaleMode === 'PER_SISWA_1X') {
+                    const activeIndices = item.months.map((v, i) => v > 0 ? i : -1).filter(i => i !== -1);
+                    if (activeIndices.length >= 2) {
+                        item.months.fill(0);
+                        const perSlot = Math.floor(newStudentCount / activeIndices.length);
+                        let remainder = newStudentCount % activeIndices.length;
+                        activeIndices.forEach(idx => {
+                            item.months[idx] = perSlot + (remainder > 0 ? 1 : 0);
+                            if (remainder > 0) remainder--;
+                        });
+                    } else if (activeIndices.length === 1) {
+                        item.months[activeIndices[0]] = newStudentCount;
+                    }
+                } else if (item.scaleMode === 'PER_SISWA_2X') {
+                    const activeIndices = item.months.map((v, i) => v > 0 ? i : -1).filter(i => i !== -1);
+                    if (activeIndices.length > 0) {
+                        activeIndices.forEach(idx => {
+                            item.months[idx] = newStudentCount;
+                        });
+                    }
+                }
+            });
+        }
+
+        // Update Konfigurasi Sekolah & Perhitungan Pagu
+        function updateConfig() {
+            const level = document.getElementById('school-level').value;
+            const status = document.getElementById('school-status').value;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 0);
+            const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
+            
+            syncStudentScaledItems(studentCount);
+
+            // Update Banner Regulasi Negeri vs Swasta
+            const banner = document.getElementById('status-regulation-banner');
+            const bookText = cfg.hasMinBook10 
+                ? `Penyediaan Buku/Perpustakaan <span class="font-bold">Min. 10%</span>,` 
+                : `Buku Bacaan/Modul & Kesehatan/Multimedia <span class="font-bold">Sesuai Kebutuhan</span>,`;
+
+            if (status === 'NEGERI') {
+                banner.className = "mt-4 p-3.5 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3 text-xs text-blue-900";
+                banner.innerHTML = `
+                    <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">Ketentuan ${cfg.label} - NEGERI (Permendikdasmen No. 8 Tahun 2026):</span> 
+                        ${bookText} Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">Maks. 20%</span> dari total pagu BOSP Reguler (syarat: Bukan ASN, tercatat Dapodik/SK Penugasan, belum menerima TPG).
+                    </div>
+                `;
+            } else {
+                banner.className = "mt-4 p-3.5 rounded-xl bg-purple-50 border border-purple-200 flex items-start gap-3 text-xs text-purple-900";
+                banner.innerHTML = `
+                    <i class="fa-solid fa-school text-purple-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">Ketentuan ${cfg.label} - SWASTA (Permendikdasmen No. 8 Tahun 2026):</span> 
+                        ${bookText} Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">Maks. 40%</span> dari keseluruhan alokasi Dana BOSP Reguler yang diterima (syarat: Bukan ASN, tercatat Dapodik, memiliki NUPTK, dan belum menerima TPG).
+                    </div>
+                `;
+            }
+
+            saveToLocalStorage();
+            renderTable();
+        }
+
+        // Reset ke Data Default SMPN 2 Cigedug (590 Siswa)
+        function resetToDefaultSMPN2() {
+            document.getElementById('school-level').value = "SMP";
+            document.getElementById('school-status').value = "NEGERI";
+            document.getElementById('school-name').value = "SMPN 2 CIGEDUG";
+            document.getElementById('student-count').value = 590;
+            document.getElementById('unit-cost').value = 1100000;
+            document.getElementById('extra-fund').value = 0;
+            rkasItems = JSON.parse(JSON.stringify(initialRkasData));
+            populateKomponenDropdowns();
+            updateConfig();
+            showToast("Data berhasil dikembalikan ke pengaturan SMPN 2 Cigedug (590 Siswa)");
+        }
+
+        function togglePbdPanel() {
+            document.getElementById('pbd-panel-content').classList.toggle('hidden');
+            document.getElementById('pbd-chevron').classList.toggle('rotate-180');
+        }
+
+        function toggleSignatoryPanel() {
+            document.getElementById('signatory-panel').classList.toggle('hidden');
+            document.getElementById('sig-chevron').classList.toggle('rotate-180');
+        }
+
+        // Render Tabel Utama & Update KPI Cards
+        function renderTable() {
+            const tbody = document.getElementById('rkas-table-body');
+            const tfoot = document.getElementById('rkas-table-foot');
+            const filterKomp = document.getElementById('filter-komponen').value;
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+
+            const level = document.getElementById('school-level').value;
+            const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 0);
+            const unitCost = Math.max(0, parseInt(document.getElementById('unit-cost').value) || 0);
+            const extraFund = Math.max(0, parseInt(document.getElementById('extra-fund').value) || 0);
+            const schoolStatus = document.getElementById('school-status').value;
+            
+            const basePagu = studentCount * unitCost;
+            const totalPagu = basePagu + extraFund;
+
+            let grandTotal = 0;
+            let totalBook = 0;
+            let totalSarpras = 0;
+            let totalHonor = 0;
+            let monthlyTotals = new Array(12).fill(0);
+
+            // Hitung total keseluruhan dan 3 kategori persentase regulasi
+            rkasItems.forEach(item => {
+                const volTotal = item.months.reduce((a, b) => a + b, 0);
+                const rowTotal = volTotal * item.harga;
+                grandTotal += rowTotal;
+
+                // 1. Komponen Perpustakaan / Buku
+                if (item.kegiatan.startsWith("2.") || item.rekening.toLowerCase().includes("buku")) {
+                    totalBook += rowTotal;
+                }
+                // 2. Komponen Pemeliharaan Sarpras
+                if (item.kegiatan.startsWith("8.") || item.rekening.toLowerCase().includes("pemeliharaan")) {
+                    totalSarpras += rowTotal;
+                }
+                // 3. Komponen Pembayaran Honor
+                if (item.kegiatan.toLowerCase().includes("pembayaran honor") || item.rekening.toLowerCase().includes("honorarium")) {
+                    totalHonor += rowTotal;
+                }
+
+                item.months.forEach((vol, idx) => {
+                    monthlyTotals[idx] += (vol * item.harga);
+                });
+            });
+
+            // Filter baris untuk ditampilkan
+            const filteredItems = rkasItems.filter(item => {
+                const matchKomp = filterKomp === 'ALL' || item.kegiatan === filterKomp;
+                const matchSearch = item.uraian.toLowerCase().includes(searchQuery) || 
+                                    item.rekening.toLowerCase().includes(searchQuery) ||
+                                    item.kegiatan.toLowerCase().includes(searchQuery);
+                return matchKomp && matchSearch;
+            });
+
+            tbody.innerHTML = '';
+            if (filteredItems.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="20" class="py-8 text-center text-slate-400">
+                            <i class="fa-solid fa-folder-open text-2xl mb-2 block"></i>
+                            Tidak ada rincian kegiatan RKAS yang sesuai dengan filter pencarian.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                filteredItems.forEach((item, index) => {
+                    const volTotal = item.months.reduce((a, b) => a + b, 0);
+                    const rowTotal = volTotal * item.harga;
+                    const isHonor = item.kegiatan.toLowerCase().includes("pembayaran honor") || item.rekening.toLowerCase().includes("honorarium");
+
+                    let monthCells = '';
+                    item.months.forEach((vol, mIdx) => {
+                        const mVal = vol * item.harga;
+                        const bgClass = mIdx % 2 === 0 ? 'bg-slate-50/60' : '';
+                        monthCells += `
+                            <td class="py-2.5 px-2 text-right ${bgClass} whitespace-nowrap">
+                                ${mVal > 0 ? `<div class="font-medium text-slate-800">${formatNumberShort(mVal)}</div><div class="text-[10px] text-slate-400">(${vol} ${item.satuan})</div>` : '<span class="text-slate-300">-</span>'}
+                            </td>
+                        `;
+                    });
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-primary-50/30 transition group";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 text-center font-semibold text-slate-500 sticky left-0 bg-white group-hover:bg-primary-50/30 z-10">${index + 1}</td>
+                        <td class="py-2.5 px-3">
+                            <span class="font-semibold text-slate-800 block leading-snug">${item.kegiatan}</span>
+                            ${item.scaleMode !== 'MANUAL' ? `<span class="inline-block mt-1 text-[10px] bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded font-medium"><i class="fa-solid fa-link mr-1"></i>Terintegrasi Jml Siswa</span>` : ''}
+                        </td>
+                        <td class="py-2.5 px-3 text-[11px] font-mono text-slate-600">${item.rekening}</td>
+                        <td class="py-2.5 px-3">
+                            <span class="font-medium text-slate-800 leading-snug block">${item.uraian}</span>
+                            ${isHonor ? `<span class="inline-block mt-1 text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-semibold">Komponen Honorarium</span>` : ''}
+                        </td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <span class="font-bold text-slate-800">${volTotal}</span>
+                            <span class="text-slate-500 block text-[11px]">${item.satuan}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-right whitespace-nowrap font-medium text-slate-700">${formatNumberShort(item.harga)}</td>
+                        <td class="py-2.5 px-3 text-right whitespace-nowrap font-bold text-primary-900 bg-primary-50/40">${formatRupiah(rowTotal)}</td>
+                        ${monthCells}
+                        <td class="py-2.5 px-3 text-center sticky right-0 bg-white group-hover:bg-primary-50/30 z-10 shadow-l">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openItemModal(${item.id})" title="Edit Kegiatan" class="p-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                <button onclick="openDeleteModal(${item.id})" title="Hapus Kegiatan" class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Render Footer Total Per Bulan
+            let monthFootCells = '';
+            monthlyTotals.forEach(mTotal => {
+                monthFootCells += `<td class="py-3 px-2 text-right whitespace-nowrap">${formatNumberShort(mTotal)}</td>`;
+            });
+
+            tfoot.innerHTML = `
+                <tr>
+                    <td colspan="6" class="py-3 px-4 text-right uppercase tracking-wider sticky left-0 bg-slate-800 z-10">Total Rencana Belanja RKAS TA 2027</td>
+                    <td class="py-3 px-3 text-right whitespace-nowrap text-amber-300 text-sm bg-slate-900">${formatRupiah(grandTotal)}</td>
+                    ${monthFootCells}
+                    <td class="py-3 px-3 sticky right-0 bg-slate-800 z-10"></td>
+                </tr>
+            `;
+
+            // Hitung Total Tahap 1 (Jan-Jun) dan Tahap 2 (Jul-Des)
+            const totalTahap1 = monthlyTotals.slice(0, 6).reduce((a, b) => a + b, 0);
+            const totalTahap2 = monthlyTotals.slice(6, 12).reduce((a, b) => a + b, 0);
+
+            updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg);
+        }
+
+        // Update Kartu Indikator Keuangan & 3 Batas Persentase Regulasi
+        function updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg) {
+            document.getElementById('kpi-total-pagu').textContent = formatRupiah(totalPagu);
+            document.getElementById('kpi-pagu-desc').textContent = extraFund > 0 
+                ? `${studentCount} Siswa × ${formatRupiah(unitCost)} + Tambahan ${formatRupiah(extraFund)}`
+                : `${studentCount} Siswa × ${formatRupiah(unitCost)}`;
+
+            document.getElementById('kpi-total-budgeted').textContent = formatRupiah(grandTotal);
+            const pctBudget = totalPagu > 0 ? Math.min(100, Math.round((grandTotal / totalPagu) * 100)) : 0;
+            const budgetBar = document.getElementById('kpi-budget-bar');
+            budgetBar.style.width = `${pctBudget}%`;
+            budgetBar.className = grandTotal > totalPagu ? 'bg-red-500 h-1.5 rounded-full transition-all duration-300' : 'bg-emerald-500 h-1.5 rounded-full transition-all duration-300';
+
+            const remaining = totalPagu - grandTotal;
+            const remEl = document.getElementById('kpi-remaining-budget');
+            const remStatus = document.getElementById('kpi-remaining-status');
+            remEl.textContent = formatRupiah(remaining);
+            
+            if (remaining === 0) {
+                remEl.className = "text-xl sm:text-2xl font-bold text-emerald-600";
+                remStatus.textContent = "Anggaran Seimbang (100% Terdistribusi)";
+                remStatus.className = "text-xs text-emerald-600 font-semibold mt-1";
+            } else if (remaining > 0) {
+                remEl.className = "text-xl sm:text-2xl font-bold text-amber-600";
+                remStatus.textContent = `Tersisa ${100 - pctBudget}% pagu belum teralokasi`;
+                remStatus.className = "text-xs text-slate-500 mt-1";
+            } else {
+                remEl.className = "text-xl sm:text-2xl font-bold text-red-600";
+                remStatus.textContent = "Peringatan: Melebihi Pagu Anggaran!";
+                remStatus.className = "text-xs text-red-600 font-bold mt-1";
+            }
+
+            // 1. Monitoring Perpustakaan / Buku (Min. 10% pada Dikdasmen; Fleksibel pada PAUD/Kesetaraan)
+            const bookPct = basePagu > 0 ? ((totalBook / basePagu) * 100).toFixed(2) : 0;
+            const minBook = basePagu * 0.10;
+            document.getElementById('kpi-book-title').textContent = cfg.bookTitle;
+            document.getElementById('kpi-book-rule-badge').textContent = cfg.bookRuleLabel;
+            const bookPctEl = document.getElementById('kpi-book-percent');
+            const bookBadgeEl = document.getElementById('kpi-book-status-badge');
+            bookPctEl.textContent = `${bookPct}%`;
+
+            if (cfg.hasMinBook10) {
+                document.getElementById('kpi-book-amount').textContent = `${formatRupiah(totalBook)} (Min: ${formatRupiah(minBook)})`;
+                if (totalBook >= minBook && basePagu > 0) {
+                    bookPctEl.className = "text-xl font-bold text-emerald-600";
+                    bookBadgeEl.textContent = "✓ Memenuhi Min. 10%";
+                    bookBadgeEl.className = "text-[11px] font-bold text-emerald-600";
+                } else {
+                    bookPctEl.className = "text-xl font-bold text-red-600";
+                    bookBadgeEl.textContent = "⚠ Kurang dari 10%!";
+                    bookBadgeEl.className = "text-[11px] font-bold text-red-600";
+                }
+            } else {
+                document.getElementById('kpi-book-amount').textContent = `${formatRupiah(totalBook)} (Alokasi Fleksibel)`;
+                bookPctEl.className = "text-xl font-bold text-orange-600";
+                bookBadgeEl.textContent = "✓ Sesuai Kebutuhan";
+                bookBadgeEl.className = "text-[11px] font-bold text-emerald-600";
+            }
+
+            // 2. Monitoring Pemeliharaan Sarpras (Maks. 20%)
+            const sarprasPct = basePagu > 0 ? ((totalSarpras / basePagu) * 100).toFixed(2) : 0;
+            const maxSarpras = basePagu * 0.20;
+            const sarprasPctEl = document.getElementById('kpi-sarpras-percent');
+            const sarprasBadgeEl = document.getElementById('kpi-sarpras-status-badge');
+            document.getElementById('kpi-sarpras-amount').textContent = `${formatRupiah(totalSarpras)} (Maks: ${formatRupiah(maxSarpras)})`;
+            sarprasPctEl.textContent = `${sarprasPct}%`;
+
+            if (totalSarpras <= maxSarpras) {
+                sarprasPctEl.className = "text-xl font-bold text-emerald-600";
+                sarprasBadgeEl.textContent = "✓ Aman (≤ 20%)";
+                sarprasBadgeEl.className = "text-[11px] font-bold text-emerald-600";
+            } else {
+                sarprasPctEl.className = "text-xl font-bold text-red-600";
+                sarprasBadgeEl.textContent = "⚠ Melebihi 20%!";
+                sarprasBadgeEl.className = "text-[11px] font-bold text-red-600";
+            }
+
+            // 3. Monitoring Porsi Honorer (Maks. 20% Negeri / Maks. 40% Swasta)
+            const honorPct = basePagu > 0 ? ((totalHonor / basePagu) * 100).toFixed(2) : 0;
+            const limitRatio = schoolStatus === 'NEGERI' ? 0.20 : 0.40;
+            const limitLabel = schoolStatus === 'NEGERI' ? '20%' : '40%';
+            const maxHonor = basePagu * limitRatio;
+
+            const honorPctEl = document.getElementById('kpi-honor-percent');
+            const honorLimitBadge = document.getElementById('kpi-honor-limit-badge');
+            const honorStatusBadge = document.getElementById('kpi-honor-status-badge');
+            const honorAmtEl = document.getElementById('kpi-honor-amount');
+
+            honorPctEl.textContent = `${honorPct}%`;
+            honorLimitBadge.textContent = `Maks. ${limitLabel} (${schoolStatus === 'NEGERI' ? 'Negeri' : 'Swasta'})`;
+            honorAmtEl.textContent = `${formatRupiah(totalHonor)} (Maks: ${formatRupiah(maxHonor)})`;
+
+            if (totalHonor <= maxHonor) {
+                honorPctEl.className = "text-xl font-bold text-purple-700";
+                honorStatusBadge.textContent = `✓ Aman (≤ ${limitLabel})`;
+                honorStatusBadge.className = "text-[11px] font-bold text-emerald-600";
+            } else {
+                honorPctEl.className = "text-xl font-bold text-red-600";
+                honorStatusBadge.textContent = `⚠ Melebihi ${limitLabel}!`;
+                honorStatusBadge.className = "text-[11px] font-bold text-red-600";
+            }
+
+            // 4. Update Distribusi Tahap 1 (Jan-Jun) vs Tahap 2 (Jul-Des)
+            const t1Pct = totalPagu > 0 ? ((totalTahap1 / totalPagu) * 100).toFixed(1) : 0;
+            const t2Pct = totalPagu > 0 ? ((totalTahap2 / totalPagu) * 100).toFixed(1) : 0;
+            document.getElementById('kpi-tahap1-amount').textContent = formatRupiah(totalTahap1);
+            document.getElementById('kpi-tahap1-pct').textContent = `${t1Pct}% dari Pagu`;
+            document.getElementById('kpi-tahap1-pct').className = parseFloat(t1Pct) > 55 ? "text-[11px] font-bold text-amber-600" : "text-[11px] font-semibold text-primary-600";
+            
+            document.getElementById('kpi-tahap2-amount').textContent = formatRupiah(totalTahap2);
+            document.getElementById('kpi-tahap2-pct').textContent = `${t2Pct}% dari Pagu`;
+        }
+
+        // --- LOGIKA MODAL TAMBAH & EDIT ---
+        function openItemModal(id = null) {
+            const modal = document.getElementById('item-modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('rkas-form');
+            const monthInputs = document.querySelectorAll('.month-vol-input');
+
+            form.reset();
+            document.getElementById('edit-id').value = '';
+            monthInputs.forEach(inp => inp.value = 0);
+
+            if (id) {
+                const item = rkasItems.find(i => i.id === id);
+                if (item) {
+                    title.innerHTML = `<i class="fa-solid fa-pen-to-square"></i><span>Edit Rincian Kegiatan RKAS</span>`;
+                    document.getElementById('edit-id').value = item.id;
+                    
+                    const formKegiatan = document.getElementById('form-kegiatan');
+                    if (!Array.from(formKegiatan.options).some(o => o.value === item.kegiatan)) {
+                        const opt = document.createElement('option');
+                        opt.value = item.kegiatan;
+                        opt.textContent = item.kegiatan;
+                        formKegiatan.appendChild(opt);
+                    }
+                    formKegiatan.value = item.kegiatan;
+                    document.getElementById('form-rekening').value = item.rekening;
+                    document.getElementById('form-uraian').value = item.uraian;
+                    document.getElementById('form-satuan').value = item.satuan;
+                    document.getElementById('form-harga').value = item.harga;
+                    document.getElementById('form-scale-mode').value = item.scaleMode || 'MANUAL';
+                    
+                    item.months.forEach((val, idx) => {
+                        if (monthInputs[idx]) monthInputs[idx].value = val;
+                    });
+                }
+            } else {
+                title.innerHTML = `<i class="fa-solid fa-plus-circle"></i><span>Tambah Rincian Kegiatan RKAS</span>`;
+            }
+
+            checkHonorCategory();
+            recalcModalTotal();
+            modal.classList.remove('hidden');
+        }
+
+        function closeItemModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        function checkHonorCategory() {
+            const rek = document.getElementById('form-rekening').value.toLowerCase();
+            const keg = document.getElementById('form-kegiatan').value.toLowerCase();
+            const status = document.getElementById('school-status').value;
+            const alertBox = document.getElementById('modal-honor-alert');
+            const alertText = document.getElementById('modal-honor-alert-text');
+
+            if (keg.includes("pembayaran honor") || rek.includes("honorarium") || rek.includes("5.1.02.02.01.0013")) {
+                const limitStr = status === 'NEGERI' ? '20% (Sekolah Negeri)' : '40% (Sekolah Swasta)';
+                alertText.innerHTML = `Item ini terdeteksi sebagai <strong>Belanja Honorer</strong>. Pastikan total keseluruhan tidak melebihi batas <strong>${limitStr}</strong>, penerima bukan ASN, tercatat di Dapodik, dan belum menerima TPG.`;
+                alertBox.classList.remove('hidden');
+            } else {
+                alertBox.classList.add('hidden');
+            }
+        }
+
+        function applyStudentScale() {
+            const mode = document.getElementById('form-scale-mode').value;
+            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 0);
+            const monthInputs = document.querySelectorAll('.month-vol-input');
+
+            if (mode === 'PER_SISWA_1X') {
+                monthInputs.forEach(inp => inp.value = 0);
+                monthInputs[2].value = Math.ceil(studentCount / 2);
+                monthInputs[7].value = Math.floor(studentCount / 2);
+            } else if (mode === 'PER_SISWA_2X') {
+                monthInputs.forEach(inp => inp.value = 0);
+                monthInputs[2].value = studentCount;
+                monthInputs[8].value = studentCount;
+            }
+            recalcModalTotal();
+        }
+
+        function fillMonths(preset) {
+            const monthInputs = document.querySelectorAll('.month-vol-input');
+            monthInputs.forEach(inp => inp.value = 0);
+
+            if (preset === 'ALL_1') {
+                monthInputs.forEach(inp => inp.value = 1);
+            } else if (preset === 'TW1') {
+                monthInputs[2].value = 1;
+            } else if (preset === 'TW3') {
+                monthInputs[7].value = 1;
+            }
+            recalcModalTotal();
+        }
+
+        function recalcModalTotal() {
+            const harga = parseInt(document.getElementById('form-harga').value) || 0;
+            const monthInputs = document.querySelectorAll('.month-vol-input');
+            let totalVol = 0;
+            monthInputs.forEach(inp => {
+                totalVol += Math.max(0, parseInt(inp.value) || 0);
+            });
+            document.getElementById('modal-total-vol').textContent = totalVol;
+            document.getElementById('modal-total-rupiah').textContent = formatRupiah(totalVol * harga);
+        }
+
+        function saveItem(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-id').value;
+            const kegiatan = document.getElementById('form-kegiatan').value;
+            const rekening = document.getElementById('form-rekening').value;
+            const uraian = document.getElementById('form-uraian').value;
+            const satuan = document.getElementById('form-satuan').value;
+            const harga = Math.max(1, parseInt(document.getElementById('form-harga').value) || 0);
+            const scaleMode = document.getElementById('form-scale-mode').value;
+            
+            const monthInputs = document.querySelectorAll('.month-vol-input');
+            const months = Array.from(monthInputs).map(inp => Math.max(0, parseInt(inp.value) || 0));
+            const totalVol = months.reduce((a, b) => a + b, 0);
+
+            if (totalVol === 0) {
+                showToast("Harap isi volume minimal pada salah satu bulan!", "error");
+                return;
+            }
+
+            if (editId) {
+                const idx = rkasItems.findIndex(i => i.id === parseInt(editId));
+                if (idx !== -1) {
+                    rkasItems[idx] = { id: parseInt(editId), kegiatan, rekening, uraian, satuan, harga, scaleMode, months };
+                    showToast("Rincian kegiatan RKAS berhasil diperbarui!");
+                }
+            } else {
+                const newId = rkasItems.length > 0 ? Math.max(...rkasItems.map(i => i.id)) + 1 : 1;
+                rkasItems.push({ id: newId, kegiatan, rekening, uraian, satuan, harga, scaleMode, months });
+                showToast("Kegiatan baru berhasil ditambahkan ke RKAS!");
+            }
+
+            saveToLocalStorage();
+            closeItemModal();
+            renderTable();
+        }
+
+        // --- LOGIKA HAPUS ---
+        function openDeleteModal(id) {
+            itemToDeleteId = id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            itemToDeleteId = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+            if (itemToDeleteId !== null) {
+                rkasItems = rkasItems.filter(i => i.id !== itemToDeleteId);
+                saveToLocalStorage();
+                closeDeleteModal();
+                renderTable();
+                showToast("Item kegiatan berhasil dihapus dari RKAS.", "warning");
+            }
+        });
+
+        // --- LOGIKA PREVIEW & EKSPOR (PDF / WORD / GOOGLE DOCS) ---
+        function generateOfficialDocumentHTML() {
+            const level = document.getElementById('school-level').value;
+            const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
+            const schoolName = document.getElementById('school-name').value || "SATUAN PENDIDIKAN";
+            const schoolStatus = document.getElementById('school-status').value;
+            const studentCount = parseInt(document.getElementById('student-count').value) || 0;
+            const unitCost = parseInt(document.getElementById('unit-cost').value) || 0;
+            const extraFund = parseInt(document.getElementById('extra-fund').value) || 0;
+            const totalPagu = (studentCount * unitCost) + extraFund;
+
+            const docCity = document.getElementById('doc-city').value || "...................., ............ 2026";
+            const headmasterName = document.getElementById('headmaster-name').value || "........................................";
+            const headmasterNip = document.getElementById('headmaster-nip').value;
+            const treasurerName = document.getElementById('treasurer-name').value || "........................................";
+
+            let grandTotal = 0;
+            let monthlyTotals = new Array(12).fill(0);
+            let rowsHtml = '';
+
+            rkasItems.forEach((item, idx) => {
+                const volTotal = item.months.reduce((a, b) => a + b, 0);
+                const rowTotal = volTotal * item.harga;
+                grandTotal += rowTotal;
+
+                let mCols = '';
+                item.months.forEach((v, mIdx) => {
+                    const val = v * item.harga;
+                    monthlyTotals[mIdx] += val;
+                    mCols += `<td style="border:1px solid #000; padding:4px; text-align:right; font-size:8pt;">${val > 0 ? formatNumberShort(val) : '-'}</td>`;
+                });
+
+                rowsHtml += `
+                    <tr>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">${idx + 1}</td>
+                        <td style="border:1px solid #000; padding:4px;">${item.kegiatan}</td>
+                        <td style="border:1px solid #000; padding:4px;">${item.rekening}</td>
+                        <td style="border:1px solid #000; padding:4px;">${item.uraian}</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">${volTotal} ${item.satuan}</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:right;">${formatNumberShort(item.harga)}</td>
+                        <td style="border:1px solid #000; padding:4px; text-align:right; font-weight:bold;">${formatNumberShort(rowTotal)}</td>
+                        ${mCols}
+                    </tr>
+                `;
+            });
+
+            let footMonths = '';
+            monthlyTotals.forEach(mt => {
+                footMonths += `<td style="border:1px solid #000; padding:4px; text-align:right; font-weight:bold; font-size:8pt;">${formatNumberShort(mt)}</td>`;
+            });
+
+            return `
+                <div style="font-family: 'Times New Roman', Times, serif; color: #000;">
+                    <div style="text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px;">
+                        <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">RENCANA KEGIATAN DAN ANGGARAN SEKOLAH (RKAS)</h2>
+                        <h3 style="margin: 4px 0; font-size: 12pt; text-transform: uppercase;">TAHUN ANGGARAN 2027</h3>
+                        <p style="margin: 0; font-size: 10pt;">Berdasarkan Permendikdasmen Nomor 8 Tahun 2026 & Perencanaan Berbasis Data (Rapor PBD 2026)</p>
+                    </div>
+
+                    <table style="width: 100%; margin-bottom: 15px; font-size: 10pt; border: none;">
+                        <tr>
+                            <td style="width: 22%; border: none; padding: 2px;">Nama Satuan Pendidikan</td>
+                            <td style="width: 38%; border: none; padding: 2px;">: <strong>${schoolName} (${level} - ${schoolStatus})</strong></td>
+                            <td style="width: 20%; border: none; padding: 2px;">Sumber Dana</td>
+                            <td style="width: 20%; border: none; padding: 2px;">: ${cfg.label} TA 2027</td>
+                        </tr>
+                        <tr>
+                            <td style="border: none; padding: 2px;">Jumlah Peserta Didik</td>
+                            <td style="border: none; padding: 2px;">: <strong>${studentCount} Peserta Didik</strong></td>
+                            <td style="border: none; padding: 2px;">Satuan Biaya / Siswa</td>
+                            <td style="border: none; padding: 2px;">: ${formatRupiah(unitCost)}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: none; padding: 2px;">Total Pagu Anggaran</td>
+                            <td style="border: none; padding: 2px;">: <strong>${formatRupiah(totalPagu)}</strong></td>
+                            <td style="border: none; padding: 2px;">Total Rencana Belanja</td>
+                            <td style="border: none; padding: 2px;">: <strong>${formatRupiah(grandTotal)}</strong></td>
+                        </tr>
+                    </table>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt;">
+                        <thead>
+                            <tr style="background-color: #e2e8f0;">
+                                <th style="border:1px solid #000; padding:5px; text-align:center;">No</th>
+                                <th style="border:1px solid #000; padding:5px;">Kegiatan</th>
+                                <th style="border:1px solid #000; padding:5px;">Rekening Belanja</th>
+                                <th style="border:1px solid #000; padding:5px;">Uraian</th>
+                                <th style="border:1px solid #000; padding:5px;">Satuan</th>
+                                <th style="border:1px solid #000; padding:5px; text-align:right;">Harga Satuan</th>
+                                <th style="border:1px solid #000; padding:5px; text-align:right;">Jumlah (Rp)</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jan</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Feb</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Mar</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Apr</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Mei</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jun</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jul</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Agu</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Sep</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Okt</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Nov</th>
+                                <th style="border:1px solid #000; padding:4px; text-align:right;">Des</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #f1f5f9;">
+                                <td colspan="6" style="border:1px solid #000; padding:5px; text-align:right; font-weight:bold;">JUMLAH TOTAL BELANJA</td>
+                                <td style="border:1px solid #000; padding:5px; text-align:right; font-weight:bold;">${formatNumberShort(grandTotal)}</td>
+                                ${footMonths}
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <table style="width: 100%; margin-top: 30px; font-size: 10pt; border: none; text-align: center;">
+                        <tr>
+                            <td style="width: 33%; border: none; vertical-align: top;">
+                                Mengetahui,<br>Ketua Komite Sekolah / Yayasan<br><br><br><br>
+                                <strong>( ........................................ )</strong>
+                            </td>
+                            <td style="width: 33%; border: none; vertical-align: top;">
+                                Menyetujui,<br>Kepala ${schoolName}<br><br><br><br>
+                                <strong>( ${headmasterName} )</strong><br>${headmasterNip ? headmasterNip : ''}
+                            </td>
+                            <td style="width: 33%; border: none; vertical-align: top;">
+                                ${docCity}<br>Bendahara BOSP<br><br><br><br>
+                                <strong>( ${treasurerName} )</strong>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+
+        function openPreviewModal() {
+            document.getElementById('print-area').innerHTML = generateOfficialDocumentHTML();
+            document.getElementById('preview-modal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.add('hidden');
+        }
+
+        function printPDF() {
+            window.print();
+        }
+
+        function exportToWord() {
+            const schoolName = document.getElementById('school-name').value || "RKAS_Sekolah";
+            const content = generateOfficialDocumentHTML();
+            const header = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                      xmlns:w='urn:schemas-microsoft-com:office:word' 
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>RKAS TA 2027</title>
+                <style>
+                    @page Section1 { size: 11.69in 8.27in; mso-page-orientation: landscape; margin: 0.5in; }
+                    div.Section1 { page: Section1; }
+                </style>
+                </head><body><div class="Section1">
+            `;
+            const footer = "</div></body></html>";
+            const sourceHTML = header + content + footer;
+
+            const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `RKAS_TA_2027_${schoolName.replace(/\s+/g, '_')}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("Dokumen Word (.doc) berhasil diunduh!");
+        }
+
+        function copyForGoogleDocs() {
+            const printArea = document.getElementById('print-area');
+            const range = document.createRange();
+            range.selectNode(printArea);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            try {
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                showToast("Tabel RKAS berhasil disalin! Silakan buka Google Dokumen lalu tekan Ctrl+V (Tempel).");
+            } catch (err) {
+                showToast("Gagal menyalin otomatis. Silakan blok tabel di preview lalu tekan Ctrl+C.", "error");
+            }
+        }
+
+        // Inisialisasi saat halaman dimuat
+        window.onload = function() {
+            loadFromLocalStorage();
+            populateKomponenDropdowns();
+            updateConfig();
+        };
+    </script>
+</body>
+</html>
