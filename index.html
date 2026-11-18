@@ -34,8 +34,11 @@
         }
     </script>
     <style>
-        /* Pengaturan khusus untuk mode cetak (Print / PDF) */
+        /* Pengaturan khusus untuk mode cetak (Print / PDF) - Tetap presisi sesuai standar cetak */
         @media print {
+            html {
+                font-size: 16px !important; /* Reset zoom tampilan layar saat mencetak */
+            }
             body * {
                 visibility: hidden;
             }
@@ -46,21 +49,24 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 100%;
-                padding: 0;
-                margin: 0;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
             }
             .no-print {
                 display: none !important;
             }
-            table {
+            #print-area table {
                 border-collapse: collapse;
-                width: 100%;
-                font-size: 8.5pt;
+                width: 100% !important;
+                table-layout: fixed;
             }
-            th, td {
+            #print-area th, #print-area td {
                 border: 1px solid #000 !important;
-                padding: 3px 5px !important;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
         }
         /* Custom Scrollbar untuk tabel responsif */
@@ -108,6 +114,15 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
+                    <!-- Menu Kontrol Zoom In / Ukuran Teks Layar (Ramah Usia 50+ Tahun) -->
+                    <div class="flex items-center bg-white/10 border border-white/20 rounded-xl px-2.5 py-1.5 gap-1.5" title="Perbesar Tampilan Layar (Tidak memengaruhi ukuran cetak)">
+                        <i class="fa-solid fa-magnifying-glass-plus text-amber-300 text-xs"></i>
+                        <span class="text-[11px] font-medium text-primary-100 hidden xl:inline">Tampilan:</span>
+                        <button type="button" onclick="adjustZoom(-15)" class="w-6 h-6 rounded-lg bg-white/15 hover:bg-white/25 text-white font-bold text-xs flex items-center justify-center transition" title="Perkecil Teks">A-</button>
+                        <span id="zoom-level-label" class="text-xs font-bold text-white min-w-[38px] text-center">100%</span>
+                        <button type="button" onclick="adjustZoom(15)" class="w-6 h-6 rounded-lg bg-amber-400 hover:bg-amber-300 text-primary-950 font-bold text-xs flex items-center justify-center transition" title="Perbesar Teks (Mode Baca 50+)">A+</button>
+                    </div>
+
                     <button onclick="exportJsonData()" title="Simpan Cadangan File Kerja (.json)" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium px-3 py-2.5 rounded-xl text-xs transition flex items-center gap-1.5">
                         <i class="fa-solid fa-download"></i>
                         <span class="hidden sm:inline">Backup JSON</span>
@@ -647,18 +662,28 @@
     <!-- MODAL PREVIEW & EKSPOR DOKUMEN (PDF / WORD / GOOGLE DOCS) -->
     <div id="preview-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-6">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[92vh] flex flex-col overflow-hidden">
-            <!-- Toolbar Ekspor -->
+            <!-- Toolbar Ekspor & Pilihan Orientasi Cetak -->
             <div class="bg-slate-800 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 no-print">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-file-lines text-amber-400"></i>
                     <span class="font-bold text-sm">Preview Dokumen Resmi RKAS TA 2027</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
+                    <!-- Pilihan Orientasi Kertas (Landscape / Portrait) -->
+                    <div class="flex items-center bg-slate-700 rounded-xl p-1 border border-slate-600">
+                        <button type="button" id="btn-orient-landscape" onclick="setPrintOrientation('landscape')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition flex items-center gap-1">
+                            <i class="fa-solid fa-image"></i> Landscape
+                        </button>
+                        <button type="button" id="btn-orient-portrait" onclick="setPrintOrientation('portrait')" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1">
+                            <i class="fa-solid fa-file"></i> Portrait
+                        </button>
+                    </div>
+
                     <button onclick="printPDF()" class="bg-red-600 hover:bg-red-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
                         <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF
                     </button>
                     <button onclick="exportToWord()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-file-word"></i> Unduh Format Word (.doc)
+                        <i class="fa-solid fa-file-word"></i> Unduh Word (.doc)
                     </button>
                     <button onclick="copyForGoogleDocs()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
                         <i class="fa-brands fa-google-drive"></i> Salin ke Google Dokumen
@@ -669,9 +694,9 @@
                 </div>
             </div>
 
-            <!-- Area Dokumen Siap Cetak -->
-            <div class="flex-1 overflow-auto p-6 sm:p-10 bg-slate-100">
-                <div id="print-area" class="bg-white shadow-md mx-auto p-6 sm:p-8 max-w-[1100px] text-black">
+            <!-- Area Dokumen Siap Cetak (Ukuran Font Tetap Standar Cetak 16px Base, Tidak Terpengaruh Zoom Layar) -->
+            <div class="flex-1 overflow-auto p-4 sm:p-8 bg-slate-200" style="font-size: 16px;">
+                <div id="print-area" class="bg-white shadow-lg mx-auto p-6 sm:p-8 max-w-[1120px] text-black transition-all duration-200">
                     <!-- Konten Dokumen RKAS diisi secara dinamis oleh JS -->
                 </div>
             </div>
@@ -1000,6 +1025,23 @@
         const STORAGE_KEY = 'rkas_bosp_universal_2027_v2';
         let rkasItems = JSON.parse(JSON.stringify(initialRkasData));
         let itemToDeleteId = null;
+        let currentZoom = 100;
+        let printOrientation = 'landscape';
+
+        // Pengaturan Zoom In / Ukuran Tampilan Layar (Ramah Pengguna 50+ Tahun)
+        function applyZoomLevel(zoomPct) {
+            currentZoom = Math.min(145, Math.max(100, zoomPct));
+            // Mengubah root font-size sehingga seluruh komponen Tailwind (rem) membesar secara proporsional & tajam
+            document.documentElement.style.fontSize = `${currentZoom}%`;
+            const label = document.getElementById('zoom-level-label');
+            if (label) label.textContent = `${currentZoom}%`;
+        }
+
+        function adjustZoom(delta) {
+            applyZoomLevel(currentZoom + delta);
+            saveToLocalStorage();
+            showToast(`Ukuran tampilan layar disesuaikan ke ${currentZoom}% (Format cetak tetap standar).`);
+        }
 
         // Format Mata Uang Rupiah
         function formatRupiah(angka) {
@@ -1041,6 +1083,7 @@
         // --- PENYIMPANAN LOKAL & BACKUP JSON ---
         function saveToLocalStorage() {
             const payload = {
+                zoom: currentZoom,
                 level: document.getElementById('school-level').value,
                 status: document.getElementById('school-status').value,
                 schoolName: document.getElementById('school-name').value,
@@ -1065,6 +1108,7 @@
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     const data = JSON.parse(saved);
+                    if (data.zoom) applyZoomLevel(data.zoom);
                     if (data.level) document.getElementById('school-level').value = data.level;
                     if (data.status) document.getElementById('school-status').value = data.status;
                     if (data.schoolName) document.getElementById('school-name').value = data.schoolName;
@@ -2017,7 +2061,35 @@
         });
 
         // --- LOGIKA PREVIEW & EKSPOR (PDF / WORD / GOOGLE DOCS) ---
-        function generateOfficialDocumentHTML() {
+        function setPrintOrientation(orientation) {
+            printOrientation = orientation;
+            const btnLand = document.getElementById('btn-orient-landscape');
+            const btnPort = document.getElementById('btn-orient-portrait');
+            const printArea = document.getElementById('print-area');
+
+            if (orientation === 'landscape') {
+                btnLand.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition flex items-center gap-1";
+                btnPort.className = "px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1";
+                printArea.style.width = "1080px";
+                printArea.style.maxWidth = "1080px";
+                printArea.style.padding = "24px";
+            } else {
+                btnPort.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition flex items-center gap-1";
+                btnLand.className = "px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1";
+                printArea.style.width = "760px"; // Lebar bersih kertas A4 Portrait
+                printArea.style.maxWidth = "760px";
+                printArea.style.padding = "18px";
+            }
+
+            printArea.innerHTML = generateOfficialDocumentHTML(orientation);
+        }
+
+        function generateOfficialDocumentHTML(orientation = printOrientation) {
+            const isPortrait = orientation === 'portrait';
+            const baseFont = isPortrait ? '5.4pt' : '7pt';
+            const monthFont = isPortrait ? '4.8pt' : '6.2pt';
+            const cellPad = isPortrait ? '1.5px 2px' : '3px 3px';
+
             const level = document.getElementById('school-level').value;
             const cfg = LEVEL_CONFIG[level] || LEVEL_CONFIG.SMP;
             const schoolName = document.getElementById('school-name').value || "SATUAN PENDIDIKAN";
@@ -2032,6 +2104,15 @@
             const headmasterNip = document.getElementById('headmaster-nip').value;
             const treasurerName = document.getElementById('treasurer-name').value || "........................................";
 
+            // Pada mode Portrait, tampilkan angka bulanan dalam ribuan (misal 12.000) agar presisi 100% di lebar A4 Portrait tanpa terpotong
+            const formatDocMonth = (val) => {
+                if (val === 0) return '-';
+                if (isPortrait) {
+                    return formatNumberShort(Math.round(val / 1000));
+                }
+                return formatNumberShort(val);
+            };
+
             let grandTotal = 0;
             let monthlyTotals = new Array(12).fill(0);
             let rowsHtml = '';
@@ -2045,18 +2126,18 @@
                 item.months.forEach((v, mIdx) => {
                     const val = v * item.harga;
                     monthlyTotals[mIdx] += val;
-                    mCols += `<td style="border:1px solid #000; padding:4px; text-align:right; font-size:8pt;">${val > 0 ? formatNumberShort(val) : '-'}</td>`;
+                    mCols += `<td style="border:1px solid #000; padding:${cellPad}; text-align:right; font-size:${monthFont}; word-wrap:break-word; overflow-wrap:break-word;">${formatDocMonth(val)}</td>`;
                 });
 
                 rowsHtml += `
                     <tr>
-                        <td style="border:1px solid #000; padding:4px; text-align:center;">${idx + 1}</td>
-                        <td style="border:1px solid #000; padding:4px;">${item.kegiatan}</td>
-                        <td style="border:1px solid #000; padding:4px;">${item.rekening}</td>
-                        <td style="border:1px solid #000; padding:4px;">${item.uraian}</td>
-                        <td style="border:1px solid #000; padding:4px; text-align:center;">${volTotal} ${item.satuan}</td>
-                        <td style="border:1px solid #000; padding:4px; text-align:right;">${formatNumberShort(item.harga)}</td>
-                        <td style="border:1px solid #000; padding:4px; text-align:right; font-weight:bold;">${formatNumberShort(rowTotal)}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; text-align:center;">${idx + 1}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; word-wrap:break-word;">${item.kegiatan}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; word-wrap:break-word;">${item.rekening}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; word-wrap:break-word;">${item.uraian}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; text-align:center; word-wrap:break-word;">${volTotal} ${item.satuan}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; text-align:right; word-wrap:break-word;">${formatNumberShort(item.harga)}</td>
+                        <td style="border:1px solid #000; padding:${cellPad}; text-align:right; font-weight:bold; word-wrap:break-word;">${formatNumberShort(rowTotal)}</td>
                         ${mCols}
                     </tr>
                 `;
@@ -2064,18 +2145,18 @@
 
             let footMonths = '';
             monthlyTotals.forEach(mt => {
-                footMonths += `<td style="border:1px solid #000; padding:4px; text-align:right; font-weight:bold; font-size:8pt;">${formatNumberShort(mt)}</td>`;
+                footMonths += `<td style="border:1px solid #000; padding:${cellPad}; text-align:right; font-weight:bold; font-size:${monthFont}; word-wrap:break-word;">${formatDocMonth(mt)}</td>`;
             });
 
             return `
-                <div style="font-family: 'Times New Roman', Times, serif; color: #000;">
-                    <div style="text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px;">
-                        <h2 style="margin: 0; font-size: 14pt; text-transform: uppercase;">RENCANA KEGIATAN DAN ANGGARAN SEKOLAH (RKAS)</h2>
-                        <h3 style="margin: 4px 0; font-size: 12pt; text-transform: uppercase;">TAHUN ANGGARAN 2027</h3>
-                        <p style="margin: 0; font-size: 10pt;">Berdasarkan Permendikdasmen Nomor 8 Tahun 2026 & Perencanaan Berbasis Data (Rapor PBD 2026)</p>
+                <div style="font-family: 'Times New Roman', Times, serif; color: #000; width: 100%; box-sizing: border-box;">
+                    <div style="text-align: center; border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 10px;">
+                        <h2 style="margin: 0; font-size: ${isPortrait ? '11pt' : '13.5pt'}; text-transform: uppercase;">RENCANA KEGIATAN DAN ANGGARAN SEKOLAH (RKAS)</h2>
+                        <h3 style="margin: 2px 0; font-size: ${isPortrait ? '9.5pt' : '11.5pt'}; text-transform: uppercase;">TAHUN ANGGARAN 2027</h3>
+                        <p style="margin: 0; font-size: ${isPortrait ? '8pt' : '9.5pt'};">Berdasarkan Permendikdasmen Nomor 8 Tahun 2026 & Perencanaan Berbasis Data (Rapor PBD 2026)</p>
                     </div>
 
-                    <table style="width: 100%; margin-bottom: 15px; font-size: 10pt; border: none;">
+                    <table style="width: 100%; margin-bottom: 10px; font-size: ${isPortrait ? '8pt' : '9.5pt'}; border: none; table-layout: fixed;">
                         <tr>
                             <td style="width: 22%; border: none; padding: 2px;">Nama Satuan Pendidikan</td>
                             <td style="width: 38%; border: none; padding: 2px;">: <strong>${schoolName} (${level} - ${schoolStatus})</strong></td>
@@ -2096,28 +2177,54 @@
                         </tr>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt;">
+                    ${isPortrait ? `<div style="text-align: right; font-size: 6.5pt; font-style: italic; margin-bottom: 2px;">*Catatan: Rincian kolom bulanan (Jan–Des) pada mode Portrait disajikan dalam ribuan rupiah (Rp 000)</div>` : ''}
+
+                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; font-size: ${baseFont};">
+                        <colgroup>
+                            <col style="width: 2.5%;">  <!-- No -->
+                            <col style="width: 9.5%;">  <!-- Kegiatan -->
+                            <col style="width: 10.5%;"> <!-- Rekening -->
+                            <col style="width: 13.5%;"> <!-- Uraian -->
+                            <col style="width: 5.5%;">  <!-- Satuan -->
+                            <col style="width: 6.5%;">  <!-- Harga Satuan -->
+                            <col style="width: 7.6%;">  <!-- Jumlah Total -->
+                            <col style="width: 3.7%;">  <!-- Jan -->
+                            <col style="width: 3.7%;">  <!-- Feb -->
+                            <col style="width: 3.7%;">  <!-- Mar -->
+                            <col style="width: 3.7%;">  <!-- Apr -->
+                            <col style="width: 3.7%;">  <!-- Mei -->
+                            <col style="width: 3.7%;">  <!-- Jun -->
+                            <col style="width: 3.7%;">  <!-- Jul -->
+                            <col style="width: 3.7%;">  <!-- Agu -->
+                            <col style="width: 3.7%;">  <!-- Sep -->
+                            <col style="width: 3.7%;">  <!-- Okt -->
+                            <col style="width: 3.7%;">  <!-- Nov -->
+                            <col style="width: 3.7%;">  <!-- Des -->
+                        </colgroup>
                         <thead>
                             <tr style="background-color: #e2e8f0;">
-                                <th style="border:1px solid #000; padding:5px; text-align:center;">No</th>
-                                <th style="border:1px solid #000; padding:5px;">Kegiatan</th>
-                                <th style="border:1px solid #000; padding:5px;">Rekening Belanja</th>
-                                <th style="border:1px solid #000; padding:5px;">Uraian</th>
-                                <th style="border:1px solid #000; padding:5px;">Satuan</th>
-                                <th style="border:1px solid #000; padding:5px; text-align:right;">Harga Satuan</th>
-                                <th style="border:1px solid #000; padding:5px; text-align:right;">Jumlah (Rp)</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jan</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Feb</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Mar</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Apr</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Mei</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jun</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Jul</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Agu</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Sep</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Okt</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Nov</th>
-                                <th style="border:1px solid #000; padding:4px; text-align:right;">Des</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:center;">No</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:left;">Kegiatan</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:left;">Rekening Belanja</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:left;">Uraian</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:center;">Satuan</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:right;">Harga Satuan</th>
+                                <th rowspan="2" style="border:1px solid #000; padding:${cellPad}; text-align:right;">Jumlah (Rp)</th>
+                                <th colspan="12" style="border:1px solid #000; padding:${cellPad}; text-align:center;">Rincian Alokasi Per Bulan ${isPortrait ? '(Dalam Ribuan Rp)' : '(Rp)'}</th>
+                            </tr>
+                            <tr style="background-color: #e2e8f0;">
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Jan</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Feb</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Mar</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Apr</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Mei</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Jun</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Jul</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Agu</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Sep</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Okt</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Nov</th>
+                                <th style="border:1px solid #000; padding:${cellPad}; text-align:center; font-size:${monthFont};">Des</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -2125,24 +2232,24 @@
                         </tbody>
                         <tfoot>
                             <tr style="background-color: #f1f5f9;">
-                                <td colspan="6" style="border:1px solid #000; padding:5px; text-align:right; font-weight:bold;">JUMLAH TOTAL BELANJA</td>
-                                <td style="border:1px solid #000; padding:5px; text-align:right; font-weight:bold;">${formatNumberShort(grandTotal)}</td>
+                                <td colspan="6" style="border:1px solid #000; padding:${cellPad}; text-align:right; font-weight:bold;">JUMLAH TOTAL BELANJA</td>
+                                <td style="border:1px solid #000; padding:${cellPad}; text-align:right; font-weight:bold; word-wrap:break-word;">${formatNumberShort(grandTotal)}</td>
                                 ${footMonths}
                             </tr>
                         </tfoot>
                     </table>
 
-                    <table style="width: 100%; margin-top: 30px; font-size: 10pt; border: none; text-align: center;">
+                    <table style="width: 100%; margin-top: 22px; font-size: ${isPortrait ? '8pt' : '9.5pt'}; border: none; text-align: center; page-break-inside: avoid; table-layout: fixed;">
                         <tr>
-                            <td style="width: 33%; border: none; vertical-align: top;">
+                            <td style="width: 33.3%; border: none; vertical-align: top;">
                                 Mengetahui,<br>Ketua Komite Sekolah / Yayasan<br><br><br><br>
                                 <strong>( ........................................ )</strong>
                             </td>
-                            <td style="width: 33%; border: none; vertical-align: top;">
+                            <td style="width: 33.3%; border: none; vertical-align: top;">
                                 Menyetujui,<br>Kepala ${schoolName}<br><br><br><br>
                                 <strong>( ${headmasterName} )</strong><br>${headmasterNip ? headmasterNip : ''}
                             </td>
-                            <td style="width: 33%; border: none; vertical-align: top;">
+                            <td style="width: 33.3%; border: none; vertical-align: top;">
                                 ${docCity}<br>Bendahara BOSP<br><br><br><br>
                                 <strong>( ${treasurerName} )</strong>
                             </td>
@@ -2153,7 +2260,7 @@
         }
 
         function openPreviewModal() {
-            document.getElementById('print-area').innerHTML = generateOfficialDocumentHTML();
+            setPrintOrientation(printOrientation);
             document.getElementById('preview-modal').classList.remove('hidden');
         }
 
@@ -2162,19 +2269,31 @@
         }
 
         function printPDF() {
+            // Sisipkan aturan @page dinamis agar dialog cetak browser otomatis menyesuaikan Landscape / Portrait
+            let dynamicPageStyle = document.getElementById('dynamic-print-page-style');
+            if (!dynamicPageStyle) {
+                dynamicPageStyle = document.createElement('style');
+                dynamicPageStyle.id = 'dynamic-print-page-style';
+                document.head.appendChild(dynamicPageStyle);
+            }
+            dynamicPageStyle.innerHTML = `@media print { @page { size: A4 ${printOrientation}; margin: ${printOrientation === 'portrait' ? '8mm' : '10mm'}; } }`;
             window.print();
         }
 
         function exportToWord() {
             const schoolName = document.getElementById('school-name').value || "RKAS_Sekolah";
-            const content = generateOfficialDocumentHTML();
+            const content = generateOfficialDocumentHTML(printOrientation);
+            const pageSetup = printOrientation === 'portrait'
+                ? 'size: 8.27in 11.69in; mso-page-orientation: portrait; margin: 0.4in;'
+                : 'size: 11.69in 8.27in; mso-page-orientation: landscape; margin: 0.5in;';
+
             const header = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' 
                       xmlns:w='urn:schemas-microsoft-com:office:word' 
                       xmlns='http://www.w3.org/TR/REC-html40'>
                 <head><meta charset='utf-8'><title>RKAS TA 2027</title>
                 <style>
-                    @page Section1 { size: 11.69in 8.27in; mso-page-orientation: landscape; margin: 0.5in; }
+                    @page Section1 { ${pageSetup} }
                     div.Section1 { page: Section1; }
                 </style>
                 </head><body><div class="Section1">
@@ -2186,12 +2305,12 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `RKAS_TA_2027_${schoolName.replace(/\s+/g, '_')}.doc`;
+            link.download = `RKAS_TA_2027_${schoolName.replace(/\s+/g, '_')}_${printOrientation}.doc`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            showToast("Dokumen Word (.doc) berhasil diunduh!");
+            showToast(`Dokumen Word (.doc) orientasi ${printOrientation.toUpperCase()} berhasil diunduh!`);
         }
 
         function copyForGoogleDocs() {
