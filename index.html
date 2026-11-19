@@ -258,6 +258,54 @@
 
         <!-- Kartu Ringkasan Keuangan & Monitoring 3 Batas Persentase Regulasi (Permendikdasmen No. 8/2026) -->
         <section class="space-y-4">
+            <!-- Panel Master Sinkronisasi Persentase Pengisian & Kepatuhan Regulasi -->
+            <div class="bg-gradient-to-r from-slate-900 via-primary-950 to-slate-900 text-white rounded-2xl p-5 shadow-md border border-primary-800">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-400 text-slate-950 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Real-Time Sync</span>
+                            <span class="text-xs font-semibold text-primary-200">Rujukan: Permendikdasmen Nomor 8 Tahun 2026</span>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <span>Progres Pengisian RKAS &amp; Kepatuhan Regulasi:</span>
+                            <span id="master-fill-pct" class="text-amber-300 text-xl sm:text-2xl font-extrabold">0.00%</span>
+                        </h3>
+                        <p id="master-compliance-summary" class="text-xs text-slate-300">Memeriksa kesesuaian alokasi pagu dan batas persentase komponen...</p>
+                    </div>
+
+                    <!-- Lencana 5 Kriteria Kepatuhan Otomatis -->
+                    <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
+                        <span id="badge-rule-pagu" class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot"></i> Pagu 100%
+                        </span>
+                        <span id="badge-rule-book" class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot"></i> Buku Wajib
+                        </span>
+                        <span id="badge-rule-sarpras" class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot"></i> Sarpras ≤ 20%
+                        </span>
+                        <span id="badge-rule-honor" class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot"></i> Batas Honor
+                        </span>
+                        <span id="badge-rule-tahap1" class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-dot"></i> Tahap I ≤ 50%
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Master Progress Bar -->
+                <div class="mt-4">
+                    <div class="flex justify-between text-[11px] font-medium text-slate-300 mb-1">
+                        <span>0% (Kosong)</span>
+                        <span id="master-score-text" class="font-bold text-amber-300">Skor Kepatuhan: 0 / 5 Kriteria Memenuhi Regulasi</span>
+                        <span>100% (Siap Pengesahan ARKAS)</span>
+                    </div>
+                    <div class="w-full bg-white/15 rounded-full h-3 overflow-hidden p-0.5">
+                        <div id="master-progress-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Baris 1: Pagu, Terinput, Sisa Pagu -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Total Pagu BOSP -->
@@ -307,7 +355,7 @@
 
             <!-- Baris 2: 3 Kontrol Batas Persentase Penggunaan Dana (Sesuai Panduan BOSP Permendikdasmen No. 8/2026) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- 1. Pengembangan Perpustakaan / Penyediaan Buku (MINIMAL 10%) -->
+                <!-- 1. Pengembangan Perpustakaan / Penyediaan Buku (MINIMAL 10% / 5%) -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-l-orange-500 border border-slate-200 flex flex-col justify-between">
                     <div class="flex items-center justify-between">
                         <span id="kpi-book-title" class="text-xs font-bold text-orange-700 uppercase tracking-wider">1. Perpustakaan & Buku</span>
@@ -378,19 +426,19 @@
             </div>
         </section>
 
-        <!-- Panduan Pendampingan Pengawas Sekolah & Rekomendasi PBD Sesuai Jenjang -->
+        <!-- Panduan Pendampingan Pengawas Sekolah, Rekomendasi PBD, & 7 Wawasan Strategis -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <button onclick="togglePbdPanel()" class="w-full px-5 py-4 bg-slate-50/80 hover:bg-slate-100/80 flex items-center justify-between text-left transition">
                 <div class="flex items-center gap-3">
                     <span class="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">PANDUAN PENGAWAS & PBD</span>
                     <div>
-                        <h3 id="pbd-panel-title" class="text-sm font-bold text-slate-800">Checklist Supervisi Pengawas Sekolah & Indikator Prioritas PBD</h3>
-                        <p class="text-xs text-slate-500">Panduan langkah demi langkah mendampingi sekolah binaan menyusun RKAS BOSP (Klik untuk buka/tutup)</p>
+                        <h3 id="pbd-panel-title" class="text-sm font-bold text-slate-800">Checklist Supervisi Pengawas, Indikator PBD, &amp; Wawasan Strategis Tim RKAS</h3>
+                        <p class="text-xs text-slate-500">Panduan lengkap mendampingi sekolah binaan sesuai Permendikdasmen No. 8 Tahun 2026 (Klik untuk buka/tutup)</p>
                     </div>
                 </div>
                 <i id="pbd-chevron" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
             </button>
-            <div id="pbd-panel-content" class="hidden p-5 border-t border-slate-200 bg-white space-y-4">
+            <div id="pbd-panel-content" class="hidden p-5 border-t border-slate-200 bg-white space-y-5">
                 <!-- 4 Langkah Pendampingan Pengawas -->
                 <div class="bg-primary-50/60 border border-primary-200 rounded-xl p-4">
                     <h4 class="text-xs font-bold text-primary-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
@@ -398,12 +446,12 @@
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                         <div class="bg-white p-3 rounded-lg border border-primary-100">
-                            <span class="font-bold text-primary-800 block mb-1">1. Kunci Pagu & Dapodik</span>
+                            <span class="font-bold text-primary-800 block mb-1">1. Kunci Pagu &amp; Dapodik</span>
                             <p class="text-slate-600">Pastikan jumlah siswa sesuai <em>cut-off</em> Dapodik 31 Agustus. Cek total pagu agar belanja tidak melebihi pagu (tidak minus).</p>
                         </div>
                         <div class="bg-white p-3 rounded-lg border border-primary-100">
                             <span class="font-bold text-primary-800 block mb-1">2. Validasi 3 Batas Wajib</span>
-                            <p class="text-slate-600">Cek 3 kartu indikator: Buku Min. 10% (Dikdasmen), Pemeliharaan Maks. 20%, dan Honor Maks. 20% (Negeri) / 40% (Swasta).</p>
+                            <p class="text-slate-600">Cek 3 kartu indikator: Buku Min. 10% (5% PAUD), Pemeliharaan Maks. 20%, dan Honor Maks. 20% (Negeri) / 40% (Swasta).</p>
                         </div>
                         <div class="bg-white p-3 rounded-lg border border-primary-100">
                             <span class="font-bold text-primary-800 block mb-1">3. Peta Pencairan 2 Tahap</span>
@@ -417,8 +465,50 @@
                 </div>
 
                 <!-- Kartu Indikator Rapor PBD per Jenjang -->
-                <div id="pbd-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                    <!-- Diisi dinamis sesuai jenjang -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-line text-emerald-600"></i> Prioritas Pembenahan Rapor Pendidikan / PBD Jenjang Terpilih:
+                    </h4>
+                    <div id="pbd-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <!-- Diisi dinamis sesuai jenjang -->
+                    </div>
+                </div>
+
+                <!-- 7 Wawasan Strategis Tambahan untuk Tim Penyusun Pemetaan BOSP TA 2027 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> 7 Wawasan Strategis Tambahan untuk Tim Penyusun Pemetaan BOSP TA 2027:
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">1. Pergeseran &amp; Perubahan RKAS (Pasal 2 a)</span>
+                            <p class="text-slate-600 leading-relaxed">Pemetaan bulanan RKAS murni bersifat fleksibel. Tim dapat melakukan <b>Pergeseran</b> antar-bulan/item dalam komponen yang sama, atau <b>Perubahan</b> saat memasukkan SiLPA terverifikasi / BOSP Kinerja.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">2. Belanja Operasi (5.1) vs Modal (5.2)</span>
+                            <p class="text-slate-600 leading-relaxed">Khusus Sekolah Negeri, pengadaan buku perpustakaan (<b>5.2.05</b>) dan peralatan di atas batas kapitalisasi aset daerah wajib masuk <b>Belanja Modal</b> agar tercatat di Kartu Inventaris Barang (KIB).</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">3. Pengadaan Barang/Jasa &amp; BA PBJ (Pasal 53 &amp; 57)</span>
+                            <p class="text-slate-600 leading-relaxed">Pengadaan wajib melalui mekanisme PBJ satuan pendidikan (SIPLah) dan dilarang pembiayaan ganda. Akhir tahun wajib menyusun <b>Laporan Penyelesaian PBJ</b> (Pasal 57 huruf c).</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">4. Program Prioritas Lampiran I (2026/2027)</span>
+                            <p class="text-slate-600 leading-relaxed">Akomodasi pembelajaran <b>Koding &amp; Kecerdasan Artifisial (AI)</b>, <i>Deep Learning</i>, <b>7 Kebiasaan Anak Indonesia Hebat</b>, PPKSP (Anti-Kekerasan), serta Papan Interaktif Digital (PID) pada BOSP Kinerja.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">5. Perhitungan Pajak &amp; Jasa Giro Bank</span>
+                            <p class="text-slate-600 leading-relaxed">Harga satuan di RKAS harus sudah memperhitungkan kewajiban pajak (PPN/PPh 21, 22, 23). Jasa giro/bunga bank rekening BOSP Negeri wajib disetor kembali ke Kas Negara/Daerah.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="font-bold text-primary-800 block mb-1">6. Anti-Retur Rekening &amp; Merger (Pasal 33 &amp; 55)</span>
+                            <p class="text-slate-600 leading-relaxed">Nama rekening wajib diawali <b>NPSN</b> dan persis sama dengan Dapodik agar tidak retur. Jika sekolah di-<i>merger</i>, sisa dana sekolah lama dapat dipakai sekolah induk atas izin Pemda.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 md:col-span-2 lg:col-span-3">
+                            <span class="font-bold text-emerald-800 block mb-1">7. Keterlibatan Unsur Orang Tua/Wali di Luar Komite (Pasal 65 ayat 3 huruf c)</span>
+                            <p class="text-slate-600 leading-relaxed">SK Tim BOS Sekolah wajib menyertakan <b>1 (satu) orang unsur orang tua/wali Murid di luar pengurus Komite Sekolah</b> yang dipilih bersama dengan mempertimbangkan kredibilitas dan bebas konflik kepentingan guna memperkuat transparansi sejak rapat pemetaan awal.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -712,15 +802,15 @@
                 label: "BOP PAUD Reguler",
                 defaultUnitCost: 600000,
                 defaultStudents: 65,
-                hasMinBook10: false,
+                minBookRatio: 0.05,
                 bookTitle: "1. Buku & APE PAUD",
-                bookRuleLabel: "Sesuai Kebutuhan",
+                bookRuleLabel: "Wajib Min. 5%",
                 komponen: [
-                    "1. Penerimaan peserta didik baru",
-                    "2. Pengembangan perpustakaan / penyediaan buku bacaan anak",
+                    "1. Penerimaan Murid baru",
+                    "2. Pengembangan perpustakaan dan/atau layanan pojok baca",
                     "3. Pelaksanaan kegiatan pembelajaran dan bermain",
-                    "4. Pelaksanaan evaluasi/asesmen perkembangan anak",
-                    "5. Pelaksanaan administrasi kegiatan satuan pendidikan",
+                    "4. Pelaksanaan evaluasi/asesmen pembelajaran dan bermain",
+                    "5. Pelaksanaan administrasi kegiatan Satuan Pendidikan",
                     "6. Pengembangan profesi pendidik dan tenaga kependidikan",
                     "7. Pembiayaan langganan daya dan jasa",
                     "8. Pemeliharaan sarana dan prasarana",
@@ -728,57 +818,57 @@
                     "10. Pembayaran honor"
                 ],
                 pbdCards: [
-                    { title: "1. Kualitas Lingkungan Belajar (E.1)", badge: "Prioritas PAUD", color: "amber", desc: "Penguatan pembelajaran berbasis bermain-belajar bermakna, pengadaan Alat Peraga Edukatif (APE), dan buku cerita bergambar." },
+                    { title: "1. Kualitas Lingkungan Belajar (E.1)", badge: "Prioritas PAUD", color: "amber", desc: "Penguatan pembelajaran berbasis bermain-belajar bermakna, pengadaan Alat Peraga Edukatif (APE), dan buku cerita bergambar (Min. 5% Pagu)." },
                     { title: "2. Kemitraan dengan Orang Tua", badge: "Parenting", color: "amber", desc: "Penyelenggaraan kelas orang tua (parenting) untuk keselarasan stimulasi tumbuh kembang anak di rumah dan satuan PAUD." },
-                    { title: "3. Kesehatan, Gizi, & UKS", badge: "Wajib PAUD", color: "emerald", desc: "Deteksi dini tumbuh kembang anak (DDTK), pemberian makanan tambahan (PMT) sehat berkala, dan sanitasi ramah anak." }
+                    { title: "3. Kesehatan, Gizi, & UKS", badge: "Komponen 9", color: "emerald", desc: "Deteksi dini tumbuh kembang anak (DDTK), pemberian makanan tambahan (PMT) sehat berkala, dan sanitasi ramah anak." }
                 ]
             },
             SD: {
                 label: "BOS Reguler SD",
                 defaultUnitCost: 900000,
                 defaultStudents: 240,
-                hasMinBook10: true,
+                minBookRatio: 0.10,
                 bookTitle: "1. Perpustakaan & Buku",
                 bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan murid baru",
+                    "1. Penerimaan Murid baru",
                     "2. Pengembangan perpustakaan",
-                    "3. Pembelajaran dan ekstrakurikuler",
-                    "4. Asesmen dan evaluasi pembelajaran",
-                    "5. Administrasi kegiatan sekolah",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan sekolah",
                     "6. Pengembangan profesi guru dan tenaga kependidikan",
-                    "7. Langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
-                    "9. Alat multimedia pembelajaran",
-                    "10. Peningkatan kompetensi keahlian",
-                    "11. Dukungan keterserapan lulusan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana sekolah",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Penyelenggaraan kegiatan peningkatan kompetensi keahlian",
+                    "11. Penyelenggaraan kegiatan dalam mendukung keterserapan lulusan",
                     "12. Pembayaran honor"
                 ],
                 pbdCards: [
-                    { title: "1. Kemampuan Literasi (A.1)", badge: "Prioritas SD", color: "amber", desc: "Penguatan fondasi membaca melalui penyediaan buku bacaan bermutu berjenjang dan pojok baca di setiap ruang kelas." },
+                    { title: "1. Kemampuan Literasi (A.1)", badge: "Prioritas SD", color: "amber", desc: "Penguatan fondasi membaca melalui penyediaan buku bacaan bermutu berjenjang (Min. 10%) dan pojok baca di setiap ruang kelas." },
                     { title: "2. Kemampuan Numerasi (A.2)", badge: "Prioritas SD", color: "amber", desc: "Penggunaan benda konkret/alat peraga matematika dasar dan penguatan Kombel guru kelas." },
-                    { title: "3. Iklim Keamanan & Inklusivitas", badge: "PPKSP", color: "emerald", desc: "Pencegahan perundungan sejak dini, pembiasaan karakter Profil Pelajar Pancasila, dan pemeliharaan sanitasi sekolah." }
+                    { title: "3. Iklim Keamanan & Inklusivitas", badge: "PPKSP", color: "emerald", desc: "Pencegahan perundungan sejak dini, pembiasaan 7 Kebiasaan Anak Indonesia Hebat, dan pemeliharaan sanitasi sekolah." }
                 ]
             },
             SMP: {
                 label: "BOS Reguler SMP",
                 defaultUnitCost: 1100000,
                 defaultStudents: 590,
-                hasMinBook10: true,
+                minBookRatio: 0.10,
                 bookTitle: "1. Perpustakaan & Buku",
                 bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan murid baru",
+                    "1. Penerimaan Murid baru",
                     "2. Pengembangan perpustakaan",
-                    "3. Pembelajaran dan ekstrakurikuler",
-                    "4. Asesmen dan evaluasi pembelajaran",
-                    "5. Administrasi kegiatan sekolah",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan sekolah",
                     "6. Pengembangan profesi guru dan tenaga kependidikan",
-                    "7. Langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
-                    "9. Alat multimedia pembelajaran",
-                    "10. Peningkatan kompetensi keahlian",
-                    "11. Dukungan keterserapan lulusan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana sekolah",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Penyelenggaraan kegiatan peningkatan kompetensi keahlian",
+                    "11. Penyelenggaraan kegiatan dalam mendukung keterserapan lulusan",
                     "12. Pembayaran honor"
                 ],
                 pbdCards: [
@@ -791,26 +881,26 @@
                 label: "BOS Reguler SMA",
                 defaultUnitCost: 1500000,
                 defaultStudents: 720,
-                hasMinBook10: true,
+                minBookRatio: 0.10,
                 bookTitle: "1. Perpustakaan & Buku",
                 bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan murid baru",
+                    "1. Penerimaan Murid baru",
                     "2. Pengembangan perpustakaan",
-                    "3. Pembelajaran dan ekstrakurikuler",
-                    "4. Asesmen dan evaluasi pembelajaran",
-                    "5. Administrasi kegiatan sekolah",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan sekolah",
                     "6. Pengembangan profesi guru dan tenaga kependidikan",
-                    "7. Langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
-                    "9. Alat multimedia pembelajaran",
-                    "10. Peningkatan kompetensi keahlian",
-                    "11. Dukungan keterserapan lulusan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana sekolah",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Penyelenggaraan kegiatan peningkatan kompetensi keahlian",
+                    "11. Penyelenggaraan kegiatan dalam mendukung keterserapan lulusan",
                     "12. Pembayaran honor"
                 ],
                 pbdCards: [
                     { title: "1. Penalaran Kritis & Literasi", badge: "Prioritas SMA", color: "amber", desc: "Pengayaan literasi digital, bahan praktik laboratorium IPA/IPS/Bahasa, dan pembinaan Olimpiade Sains (OSN)." },
-                    { title: "2. Numerasi & Riset Siswa", badge: "Prioritas SMA", color: "amber", desc: "Penguatan pembelajaran berbasis proyek (PjBL), karya tulis ilmiah remaja, dan persiapan TKA/SNBP/SNBT." },
+                    { title: "2. Numerasi & Riset Siswa", badge: "Prioritas SMA", color: "amber", desc: "Penguatan pembelajaran berbasis proyek (PjBL), karya tulis ilmiah remaja, dan persiapan tes kemampuan akademik." },
                     { title: "3. Tata Kelola & Digitalisasi", badge: "Optimal", color: "emerald", desc: "Pemeliharaan laboratorium komputer/TIK untuk asesmen nasional dan penguatan komunitas belajar MGMP sekolah." }
                 ]
             },
@@ -818,25 +908,25 @@
                 label: "BOS Reguler SMK",
                 defaultUnitCost: 1600000,
                 defaultStudents: 850,
-                hasMinBook10: true,
+                minBookRatio: 0.10,
                 bookTitle: "1. Perpustakaan & Buku",
                 bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan murid baru",
+                    "1. Penerimaan Murid baru",
                     "2. Pengembangan perpustakaan",
-                    "3. Pembelajaran dan ekstrakurikuler",
-                    "4. Asesmen dan evaluasi pembelajaran",
-                    "5. Administrasi kegiatan sekolah",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan sekolah",
                     "6. Pengembangan profesi guru dan tenaga kependidikan",
-                    "7. Langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
-                    "9. Alat multimedia pembelajaran",
-                    "10. Peningkatan kompetensi keahlian",
-                    "11. Dukungan keterserapan lulusan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana sekolah",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Penyelenggaraan kegiatan peningkatan kompetensi keahlian",
+                    "11. Penyelenggaraan kegiatan dalam mendukung keterserapan lulusan",
                     "12. Pembayaran honor"
                 ],
                 pbdCards: [
-                    { title: "1. Peningkatan Kompetensi Keahlian", badge: "Komponen 10", color: "amber", desc: "Penyelenggaraan Uji Kompetensi Keahlian (UKK), sertifikasi LSP/industri, dan bahan habis pakai praktik bengkel/lab kejuruan." },
+                    { title: "1. Peningkatan Kompetensi Keahlian", badge: "Komponen 10", color: "amber", desc: "Penyelenggaraan Uji Kompetensi Keahlian (UKK), sertifikasi LSP/industri, PKL, dan bahan praktik bengkel/teaching factory." },
                     { title: "2. Dukungan Keterserapan Lulusan", badge: "Komponen 11", color: "amber", desc: "Penguatan Bursa Kerja Khusus (BKK), penelusuran tamatan (tracer study), dan sinkronisasi kurikulum bersama DUDIKA." },
                     { title: "3. Literasi, Numerasi & Karakter Kerja", badge: "PBD SMK", color: "emerald", desc: "Penguatan budaya kerja industri (5R/K3), literasi teknis kejuruan, dan magang guru produktif di industri." }
                 ]
@@ -845,26 +935,26 @@
                 label: "BOS Reguler SLB",
                 defaultUnitCost: 3500000,
                 defaultStudents: 80,
-                hasMinBook10: true,
+                minBookRatio: 0.10,
                 bookTitle: "1. Perpustakaan & Buku",
                 bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan murid baru",
+                    "1. Penerimaan Murid baru",
                     "2. Pengembangan perpustakaan",
-                    "3. Pembelajaran dan ekstrakurikuler",
-                    "4. Asesmen dan evaluasi pembelajaran",
-                    "5. Administrasi kegiatan sekolah",
+                    "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
+                    "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
+                    "5. Pelaksanaan administrasi kegiatan sekolah",
                     "6. Pengembangan profesi guru dan tenaga kependidikan",
-                    "7. Langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
-                    "9. Alat multimedia pembelajaran",
-                    "10. Peningkatan kompetensi keahlian",
-                    "11. Dukungan keterserapan lulusan",
+                    "7. Pembiayaan langganan daya dan jasa",
+                    "8. Pemeliharaan sarana dan prasarana sekolah",
+                    "9. Penyediaan alat multimedia pembelajaran",
+                    "10. Penyelenggaraan kegiatan peningkatan kompetensi keahlian",
+                    "11. Penyelenggaraan kegiatan dalam mendukung keterserapan lulusan",
                     "12. Pembayaran honor"
                 ],
                 pbdCards: [
                     { title: "1. Pembelajaran Adaptif & Aksesibel", badge: "Prioritas SLB", color: "amber", desc: "Penyediaan buku huruf Braille, media pembelajaran visual/audio adaptif, dan alat bantu pembelajaran kebutuhan khusus." },
-                    { title: "2. Keterampilan Vokasional & Kemandirian", badge: "Komponen 10 & 11", color: "amber", desc: "Pelatihan keterampilan vokasional siswa berkebutuhan khusus dan dukungan kemandirian pasca lulus." },
+                    { title: "2. Keterampilan Vokasional & Kemandirian", badge: "Komponen 10 & 11", color: "amber", desc: "Pelatihan keterampilan vokasional siswa berkebutuhan khusus (SMALB) dan dukungan kemandirian pasca lulus." },
                     { title: "3. Sarpras Ramah Disabilitas", badge: "Aksesibilitas", color: "emerald", desc: "Pemeliharaan fasilitas aksesibilitas sekolah dan peningkatan kompetensi guru pendidikan khusus." }
                 ]
             },
@@ -872,25 +962,25 @@
                 label: "BOP Kesetaraan (Paket A/B/C)",
                 defaultUnitCost: 1500000,
                 defaultStudents: 120,
-                hasMinBook10: false,
-                bookTitle: "1. Modul & Buku Bacaan",
-                bookRuleLabel: "Sesuai Kebutuhan",
+                minBookRatio: 0.10,
+                bookTitle: "1. Perpustakaan & Modul",
+                bookRuleLabel: "Wajib Min. 10%",
                 komponen: [
-                    "1. Penerimaan peserta didik baru",
-                    "2. Pengembangan perpustakaan / penyediaan modul belajar",
+                    "1. Penerimaan Murid baru",
+                    "2. Pengembangan perpustakaan",
                     "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
-                    "4. Pelaksanaan evaluasi/asesmen pembelajaran",
+                    "4. Pelaksanaan evaluasi/asesmen pembelajaran dan bermain",
                     "5. Pelaksanaan administrasi kegiatan satuan pendidikan",
                     "6. Pengembangan profesi pendidik dan tenaga kependidikan",
                     "7. Pembiayaan langganan daya dan jasa",
-                    "8. Pemeliharaan sarana dan prasarana",
+                    "8. Pemeliharaan sarana dan prasarana Satuan Pendidikan",
                     "9. Penyediaan alat multimedia pembelajaran",
                     "10. Pembayaran honor"
                 ],
                 pbdCards: [
-                    { title: "1. Pengadaan Modul & Bahan Ajar", badge: "Prioritas PKBM/SKB", color: "amber", desc: "Pengadaan modul pembelajaran mandiri/tutorial Paket A, B, dan C serta bahan bacaan literasi fungsional." },
+                    { title: "1. Pengadaan Modul & Bahan Ajar", badge: "Wajib Min. 10%", color: "amber", desc: "Pengadaan buku teks/modul pembelajaran mandiri Paket A, B, dan C serta bahan bacaan literasi fungsional (Pasal 48 ayat 2)." },
                     { title: "2. Pemberdayaan & Keterampilan", badge: "Vokasional", color: "amber", desc: "Pembelajaran keterampilan hidup (life skills) dan kewirausahaan bagi warga belajar kesetaraan." },
-                    { title: "3. Asesmen & Pendataan Dapodik", badge: "Tata Kelola", color: "emerald", desc: "Pelaksanaan ANBK kesetaraan, ujian pendidikan kesetaraan, dan pemutakhiran data warga belajar." }
+                    { title: "3. Asesmen & Pendataan Dapodik", badge: "Tata Kelola", color: "emerald", desc: "Pelaksanaan ANBK kesetaraan, ujian pendidikan kesetaraan, dan pemutakhiran data warga belajar usia 7–24 tahun." }
                 ]
             }
         };
@@ -901,7 +991,7 @@
         const initialRkasData = [
             {
                 id: 1,
-                kegiatan: "1. Penerimaan murid baru",
+                kegiatan: "1. Penerimaan Murid baru",
                 rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
                 uraian: "Pelaksanaan SPMB (Sistem Penerimaan Murid Baru), MPLS, & Sosialisasi Pencegahan Kekerasan (PPKSP)",
                 satuan: "Paket",
@@ -921,7 +1011,7 @@
             },
             {
                 id: 3,
-                kegiatan: "3. Pembelajaran dan ekstrakurikuler",
+                kegiatan: "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
                 rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
                 uraian: "Pengadaan Bahan Praktik Pembelajaran, Media Literasi Numerasi Kelas, & Penyusunan KSP",
                 satuan: "Siswa/Thn",
@@ -931,7 +1021,7 @@
             },
             {
                 id: 4,
-                kegiatan: "3. Pembelajaran dan ekstrakurikuler",
+                kegiatan: "3. Pelaksanaan kegiatan pembelajaran dan ekstrakurikuler",
                 rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
                 uraian: "Pelaksanaan Kegiatan Ekstrakurikuler, Lomba Literasi, Numerasi, & OSN/O2SN Siswa",
                 satuan: "Siswa/Thn",
@@ -941,7 +1031,7 @@
             },
             {
                 id: 5,
-                kegiatan: "4. Asesmen dan evaluasi pembelajaran",
+                kegiatan: "4. Pelaksanaan kegiatan asesmen dan evaluasi pembelajaran",
                 rekening: "5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan",
                 uraian: "Penggandaan Naskah Asesmen Sumatif Tengah/Akhir Semester, ANBK, & Rapor Siswa",
                 satuan: "Siswa/Smt",
@@ -951,7 +1041,7 @@
             },
             {
                 id: 6,
-                kegiatan: "5. Administrasi kegiatan sekolah",
+                kegiatan: "5. Pelaksanaan administrasi kegiatan sekolah",
                 rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
                 uraian: "Pengadaan ATK Perkantoran, Tinta Printer, Kertas HVS, & Administrasi Tata Usaha Sekolah",
                 satuan: "Bulan",
@@ -961,7 +1051,7 @@
             },
             {
                 id: 7,
-                kegiatan: "5. Administrasi kegiatan sekolah",
+                kegiatan: "5. Pelaksanaan administrasi kegiatan sekolah",
                 rekening: "5.1.02.04.01.0003 - Belanja Perjalanan Dinas Dalam Daerah",
                 uraian: "Transportasi Koordinasi Pelaporan BOSP (Tenggat 31 Juli & 31 Jan), Rekonsiliasi Aset, & Rapat Dinas",
                 satuan: "Kali",
@@ -981,7 +1071,7 @@
             },
             {
                 id: 9,
-                kegiatan: "7. Langganan daya dan jasa",
+                kegiatan: "7. Pembiayaan langganan daya dan jasa",
                 rekening: "5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet",
                 uraian: "Pembayaran Langganan Daya Listrik, Air, dan Internet Sekolah",
                 satuan: "Bulan",
@@ -991,7 +1081,7 @@
             },
             {
                 id: 10,
-                kegiatan: "8. Pemeliharaan sarana dan prasarana",
+                kegiatan: "8. Pemeliharaan sarana dan prasarana sekolah",
                 rekening: "5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras",
                 uraian: "Pemeliharaan Rutin Ruang Kelas, Sanitasi/Toilet Siswa, dan Perbaikan Meubelair (Maks. 20%)",
                 satuan: "Paket",
@@ -1001,7 +1091,7 @@
             },
             {
                 id: 11,
-                kegiatan: "9. Alat multimedia pembelajaran",
+                kegiatan: "9. Penyediaan alat multimedia pembelajaran",
                 rekening: "5.2.02.10.01.0002 - Belanja Modal Peralatan Komputer / TIK & Multimedia",
                 uraian: "Pengadaan Perangkat Multimedia / Proyektor Pembelajaran & Chromebook Penunjang ANBK",
                 satuan: "Unit",
@@ -1022,7 +1112,7 @@
         ];
 
         // State Aplikasi
-        const STORAGE_KEY = 'rkas_bosp_universal_2027_v2';
+        const STORAGE_KEY = 'rkas_bosp_universal_2027_v3';
         let rkasItems = JSON.parse(JSON.stringify(initialRkasData));
         let itemToDeleteId = null;
         let currentZoom = 100;
@@ -1031,7 +1121,6 @@
         // Pengaturan Zoom In / Ukuran Tampilan Layar (Ramah Pengguna 50+ Tahun)
         function applyZoomLevel(zoomPct) {
             currentZoom = Math.min(145, Math.max(100, zoomPct));
-            // Mengubah root font-size sehingga seluruh komponen Tailwind (rem) membesar secara proporsional & tajam
             document.documentElement.style.fontSize = `${currentZoom}%`;
             const label = document.getElementById('zoom-level-label');
             if (label) label.textContent = `${currentZoom}%`;
@@ -1238,7 +1327,6 @@
                 const levelLabelName = level === 'KESETARAAN' ? 'PKBM / SKB' : `${level} ${status === 'NEGERI' ? 'NEGERI' : 'SWASTA'}`;
                 document.getElementById('school-name').value = `${levelLabelName} BINAAN`;
                 populateKomponenDropdowns();
-                // Langsung muat & sesuaikan nominal template agar sinkron real-time dan tidak minus
                 loadPresetTemplate(true);
             }
         }
@@ -1254,11 +1342,10 @@
             const cfg = LEVEL_CONFIG[level];
 
             const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
-            const honorShare = status === 'NEGERI' ? 0.12 : 0.25; // Aman di bawah 20% Negeri / 40% Swasta
+            const honorShare = (status === 'NEGERI' && !isPaudOrKesetaraan) ? 0.12 : 0.25;
 
-            // Hitung alokasi per pos agar proporsional dan seimbang
             const allocPpdb = Math.round(totalPagu * 0.04);
-            const allocBuku = Math.round(totalPagu * 0.06) * 2; // 12% (Aman >= 10%)
+            const allocBuku = Math.round(totalPagu * 0.06) * 2; // 12% (Memenuhi Min. 10% BOS/Kesetaraan & Min. 5% PAUD)
             const allocAsesmenUnit = Math.floor((totalPagu * 0.12) / (studentCount * 2));
             const allocAsesmenTotal = allocAsesmenUnit * studentCount * 2;
             const allocAtkBln = Math.floor((totalPagu * 0.09) / 12);
@@ -1276,7 +1363,7 @@
                     id: 1,
                     kegiatan: cfg.komponen[0],
                     rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
-                    uraian: `Pelaksanaan Penerimaan Peserta Didik Baru & Masa Pengenalan Lingkungan (${level})`,
+                    uraian: `Pelaksanaan Penerimaan Murid Baru & Masa Pengenalan Lingkungan (${level})`,
                     satuan: "Paket",
                     harga: allocPpdb,
                     scaleMode: "MANUAL",
@@ -1286,9 +1373,11 @@
                     id: 2,
                     kegiatan: cfg.komponen[1],
                     rekening: "5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan",
-                    uraian: isPaudOrKesetaraan 
-                        ? "Pengadaan Modul Pembelajaran Paket A/B/C & Buku Bacaan Literasi-Numerasi" 
-                        : "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Perpustakaan (Memenuhi Min. 10%)",
+                    uraian: level === 'PAUD' 
+                        ? "Pengadaan Buku Bacaan Anak & Layanan Pojok Baca (Memenuhi Min. 5%)" 
+                        : (level === 'KESETARAAN' 
+                            ? "Pengadaan Buku Teks/Modul Paket A/B/C & Buku Bacaan Literasi (Memenuhi Min. 10%)"
+                            : "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Perpustakaan (Memenuhi Min. 10%)"),
                     satuan: "Paket",
                     harga: Math.round(allocBuku / 2),
                     scaleMode: "MANUAL",
@@ -1332,7 +1421,7 @@
                     id: 6,
                     kegiatan: cfg.komponen[5],
                     rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
-                    uraian: "Penguatan Komunitas Belajar (Kombel) & Peningkatan Kompetensi Pendidik/Tutor",
+                    uraian: "Penguatan Komunitas Belajar (Kombel) & Peningkatan Kompetensi Pendidik/Tendik",
                     satuan: "Kegiatan",
                     harga: allocKombel,
                     scaleMode: "MANUAL",
@@ -1362,9 +1451,9 @@
                     id: 9,
                     kegiatan: cfg.komponen[cfg.komponen.length - 1],
                     rekening: "5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)",
-                    uraian: status === 'NEGERI' 
+                    uraian: (status === 'NEGERI' && !isPaudOrKesetaraan)
                         ? "Honorarium Tenaga Kependidikan Non-ASN Ber-SK (Operator Dapodik & Penjaga Sekolah)" 
-                        : "Honorarium Pendidik/Tutor & Tenaga Kependidikan Non-ASN Tercatat Dapodik (Belum TPG)",
+                        : "Honorarium Pendidik & Tenaga Kependidikan Non-ASN Tercatat Dapodik (Belum TPG)",
                     satuan: "Bulan",
                     harga: allocHonorBln,
                     scaleMode: "MANUAL",
@@ -1372,7 +1461,6 @@
                 }
             ];
 
-            // Otomatis seimbangkan selisih pembulatan rupiah agar sisa pagu Rp 0
             autoBalanceBudget(true);
 
             if (isAutoSwitch) {
@@ -1405,7 +1493,6 @@
             }
 
             if (diff > 0) {
-                // Jika ada sisa pagu positif, tambahkan sebagai item penyeimbang di Komponen Pembelajaran (Komponen 3)
                 const existingAdj = rkasItems.find(i => i.isAutoBalance);
                 if (existingAdj) {
                     existingAdj.harga += diff;
@@ -1425,133 +1512,16 @@
                 }
                 if (!silent) showToast(`Sisa pagu sebesar ${formatRupiah(diff)} berhasil dialokasikan agar pas 100%!`);
             } else {
-                // Jika minus (belanja melebihi pagu), kurangi secara proporsional dari item non-honor/non-buku terlebih dahulu
                 const ratio = totalPagu / grandTotal;
                 rkasItems.forEach(item => {
                     item.harga = Math.max(100, Math.floor(item.harga * ratio));
                 });
-                // Panggil ulang sekali lagi untuk menutup sisa pembulatan positif ke 0
                 autoBalanceBudget(true);
                 if (!silent) showToast("Nominal item belanja disesuaikan secara proporsional agar tidak melebihi pagu!");
                 return;
             }
 
             updateConfig();
-        }
-
-        // Muat Contoh Template Anggaran Seimbang untuk Jenjang Aktif
-        function loadPresetTemplate() {
-            const level = document.getElementById('school-level').value;
-            const status = document.getElementById('school-status').value;
-            const studentCount = Math.max(1, parseInt(document.getElementById('student-count').value) || 100);
-            const unitCost = Math.max(0, parseInt(document.getElementById('unit-cost').value) || 1000000);
-            const totalPagu = studentCount * unitCost;
-            const cfg = LEVEL_CONFIG[level];
-
-            const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
-            const honorShare = status === 'NEGERI' ? 0.10 : 0.25; // Aman di bawah 20% Negeri / 40% Swasta
-
-            rkasItems = [
-                {
-                    id: 1,
-                    kegiatan: cfg.komponen[0],
-                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
-                    uraian: `Pelaksanaan Penerimaan Murid/Peserta Didik Baru & Pengenalan Lingkungan Satuan Pendidikan (${level})`,
-                    satuan: "Paket",
-                    harga: Math.round(totalPagu * 0.03),
-                    scaleMode: "MANUAL",
-                    months: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-                },
-                {
-                    id: 2,
-                    kegiatan: cfg.komponen[1],
-                    rekening: "5.2.05.01.01.0001 - Belanja Modal Buku Perpustakaan / Bahan Bacaan",
-                    uraian: isPaudOrKesetaraan 
-                        ? "Pengadaan Buku Bacaan Anak / Modul Pembelajaran Literasi-Numerasi" 
-                        : "Pengadaan Buku Teks Utama & Buku Pengayaan Non-Teks Perpustakaan (Memenuhi Min. 10%)",
-                    satuan: "Paket",
-                    harga: Math.round(totalPagu * 0.055), // 2x = 11%
-                    scaleMode: "MANUAL",
-                    months: [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-                },
-                {
-                    id: 3,
-                    kegiatan: cfg.komponen[2],
-                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
-                    uraian: level === 'PAUD' 
-                        ? "Pengadaan Alat Peraga Edukatif (APE) & Bahan Kegiatan Bermain-Belajar Anak" 
-                        : "Pengadaan Bahan Praktik Pembelajaran, Media Literasi-Numerasi, & Ekstrakurikuler",
-                    satuan: "Siswa/Thn",
-                    harga: Math.round((totalPagu * 0.28) / studentCount),
-                    scaleMode: "PER_SISWA_1X",
-                    months: [0, 0, Math.ceil(studentCount / 2), 0, 0, 0, 0, Math.floor(studentCount / 2), 0, 0, 0, 0]
-                },
-                {
-                    id: 4,
-                    kegiatan: cfg.komponen[3],
-                    rekening: "5.1.02.01.01.0026 - Belanja Alat/Bahan untuk Kegiatan Kantor-Bahan Cetak dan Penggandaan",
-                    uraian: "Pelaksanaan Asesmen / Evaluasi Pembelajaran Semester Ganjil & Genap",
-                    satuan: "Siswa/Smt",
-                    harga: Math.round((totalPagu * 0.12) / (studentCount * 2)),
-                    scaleMode: "PER_SISWA_2X",
-                    months: [0, 0, studentCount, 0, 0, 0, 0, 0, studentCount, 0, 0, 0]
-                },
-                {
-                    id: 5,
-                    kegiatan: cfg.komponen[4],
-                    rekening: "5.1.02.01.01.0024 - Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor (ATK)",
-                    uraian: "Pengadaan ATK Kantor, Administrasi Tata Usaha, & Pelaporan BOSP",
-                    satuan: "Bulan",
-                    harga: Math.round((totalPagu * 0.08) / 12),
-                    scaleMode: "MANUAL",
-                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                {
-                    id: 6,
-                    kegiatan: cfg.komponen[5],
-                    rekening: "5.1.02.01.01.0052 - Belanja Makanan dan Minuman Rapat/Kegiatan",
-                    uraian: "Penguatan Komunitas Belajar (Kombel) & Peningkatan Kompetensi Pendidik/Tendik",
-                    satuan: "Kegiatan",
-                    harga: Math.round((totalPagu * 0.05) / 4),
-                    scaleMode: "MANUAL",
-                    months: [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]
-                },
-                {
-                    id: 7,
-                    kegiatan: cfg.komponen[6],
-                    rekening: "5.1.02.02.01.0061 - Belanja Tagihan Listrik, Air, dan Internet",
-                    uraian: "Pembayaran Langganan Daya Listrik, Air, dan Internet Satuan Pendidikan",
-                    satuan: "Bulan",
-                    harga: Math.round((totalPagu * 0.08) / 12),
-                    scaleMode: "MANUAL",
-                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                {
-                    id: 8,
-                    kegiatan: cfg.komponen[7],
-                    rekening: "5.1.02.03.02.0117 - Belanja Pemeliharaan Bangunan Gedung & Sarpras",
-                    uraian: "Pemeliharaan Rutin Ruang Belajar, Sanitasi/Toilet, dan Meubelair (Maks. 20%)",
-                    satuan: "Paket",
-                    harga: Math.round((totalPagu * 0.12) / 2),
-                    scaleMode: "MANUAL",
-                    months: [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
-                },
-                {
-                    id: 9,
-                    kegiatan: cfg.komponen[cfg.komponen.length - 1], // Selalu Komponen Pembayaran Honor
-                    rekening: "5.1.02.02.01.0013 - Belanja Jasa Tenaga Pendidikan/Kependidikan (Honorarium)",
-                    uraian: status === 'NEGERI' 
-                        ? "Honorarium Tenaga Kependidikan Non-ASN Ber-SK (Operator Dapodik & Penjaga Sekolah)" 
-                        : "Honorarium Pendidik & Tenaga Kependidikan Non-ASN Tercatat Dapodik (Belum TPG)",
-                    satuan: "Bulan",
-                    harga: Math.round((totalPagu * honorShare) / 12),
-                    scaleMode: "MANUAL",
-                    months: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                }
-            ];
-
-            updateConfig();
-            showToast(`Template RKAS ${cfg.label} (${status}) berhasil dimuat!`);
         }
 
         // Sinkronisasi item yang volumenya bergantung pada jumlah siswa
@@ -1590,11 +1560,11 @@
             
             syncStudentScaledItems(studentCount);
 
-            // Update Banner Regulasi Negeri vs Swasta
+            // Update Banner Regulasi Negeri vs Swasta sesuai Pasal 38, 42, & 48 Permendikdasmen 8/2026
             const banner = document.getElementById('status-regulation-banner');
-            const bookText = cfg.hasMinBook10 
-                ? `Penyediaan Buku/Perpustakaan <span class="font-bold">Min. 10%</span>,` 
-                : `Buku Bacaan/Modul & Kesehatan/Multimedia <span class="font-bold">Sesuai Kebutuhan</span>,`;
+            const minBookPctLabel = `${Math.round(cfg.minBookRatio * 100)}%`;
+            const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
+            const honorMaxLabel = (isPaudOrKesetaraan || status === 'SWASTA') ? 'Maks. 40%' : 'Maks. 20%';
 
             if (status === 'NEGERI') {
                 banner.className = "mt-4 p-3.5 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-3 text-xs text-blue-900";
@@ -1602,7 +1572,7 @@
                     <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5"></i>
                     <div>
                         <span class="font-bold">Ketentuan ${cfg.label} - NEGERI (Permendikdasmen No. 8 Tahun 2026):</span> 
-                        ${bookText} Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">Maks. 20%</span> dari total pagu BOSP Reguler (syarat: Bukan ASN, tercatat Dapodik/SK Penugasan, belum menerima TPG).
+                        Penyediaan Buku/Perpustakaan <span class="font-bold">Min. ${minBookPctLabel}</span>, Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">${honorMaxLabel}</span> dari total pagu BOSP Reguler (syarat: Bukan ASN, tercatat Dapodik/SK Penugasan, belum menerima TPG).
                     </div>
                 `;
             } else {
@@ -1611,7 +1581,7 @@
                     <i class="fa-solid fa-school text-purple-600 text-base mt-0.5"></i>
                     <div>
                         <span class="font-bold">Ketentuan ${cfg.label} - SWASTA (Permendikdasmen No. 8 Tahun 2026):</span> 
-                        ${bookText} Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">Maks. 40%</span> dari keseluruhan alokasi Dana BOSP Reguler yang diterima (syarat: Bukan ASN, tercatat Dapodik, memiliki NUPTK, dan belum menerima TPG).
+                        Penyediaan Buku/Perpustakaan <span class="font-bold">Min. ${minBookPctLabel}</span>, Pemeliharaan Sarpras <span class="font-bold">Maks. 20%</span>, dan Pembayaran Honor <span class="font-bold underline">Maks. 40%</span> dari keseluruhan alokasi Dana BOSP Reguler yang diterima (syarat: Bukan ASN, tercatat Dapodik, memiliki NUPTK, dan belum menerima TPG).
                     </div>
                 `;
             }
@@ -1781,18 +1751,19 @@
             const totalTahap1 = monthlyTotals.slice(0, 6).reduce((a, b) => a + b, 0);
             const totalTahap2 = monthlyTotals.slice(6, 12).reduce((a, b) => a + b, 0);
 
-            updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg);
+            updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg, level);
         }
 
         // Update Kartu Indikator Keuangan & 3 Batas Persentase Regulasi
-        function updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg) {
+        function updateKpiDisplay(basePagu, extraFund, totalPagu, grandTotal, totalBook, totalSarpras, totalHonor, totalTahap1, totalTahap2, studentCount, unitCost, schoolStatus, cfg, level) {
             document.getElementById('kpi-total-pagu').textContent = formatRupiah(totalPagu);
             document.getElementById('kpi-pagu-desc').textContent = extraFund > 0 
                 ? `${studentCount} Siswa × ${formatRupiah(unitCost)} + Tambahan ${formatRupiah(extraFund)}`
                 : `${studentCount} Siswa × ${formatRupiah(unitCost)}`;
 
             document.getElementById('kpi-total-budgeted').textContent = formatRupiah(grandTotal);
-            const pctBudget = totalPagu > 0 ? Math.min(100, Math.round((grandTotal / totalPagu) * 100)) : 0;
+            const exactPctBudget = totalPagu > 0 ? (grandTotal / totalPagu) * 100 : 0;
+            const pctBudget = totalPagu > 0 ? Math.min(100, Math.round(exactPctBudget)) : 0;
             const budgetBar = document.getElementById('kpi-budget-bar');
             budgetBar.style.width = `${pctBudget}%`;
             budgetBar.className = grandTotal > totalPagu ? 'bg-red-500 h-1.5 rounded-full transition-all duration-300' : 'bg-emerald-500 h-1.5 rounded-full transition-all duration-300';
@@ -1808,7 +1779,7 @@
                 remStatus.className = "text-xs text-emerald-600 font-semibold mt-1";
             } else if (remaining > 0) {
                 remEl.className = "text-xl sm:text-2xl font-bold text-amber-600";
-                remStatus.textContent = `Tersisa ${100 - pctBudget}% pagu belum teralokasi`;
+                remStatus.textContent = `Tersisa ${(100 - exactPctBudget).toFixed(2)}% pagu belum teralokasi`;
                 remStatus.className = "text-xs text-slate-500 mt-1";
             } else {
                 remEl.className = "text-xl sm:text-2xl font-bold text-red-600";
@@ -1816,42 +1787,40 @@
                 remStatus.className = "text-xs text-red-600 font-bold mt-1";
             }
 
-            // 1. Monitoring Perpustakaan / Buku (Min. 10% pada Dikdasmen; Fleksibel pada PAUD/Kesetaraan)
+            // 1. Monitoring Perpustakaan / Buku (Min. 10% BOS & Kesetaraan; Min. 5% PAUD sesuai Pasal 38 ayat 2)
             const bookPct = basePagu > 0 ? ((totalBook / basePagu) * 100).toFixed(2) : 0;
-            const minBook = basePagu * 0.10;
+            const minBookRatio = cfg.minBookRatio || 0.10;
+            const minBookPctText = `${Math.round(minBookRatio * 100)}%`;
+            const minBook = basePagu * minBookRatio;
+            const isBookValid = (totalBook >= minBook && basePagu > 0);
+
             document.getElementById('kpi-book-title').textContent = cfg.bookTitle;
             document.getElementById('kpi-book-rule-badge').textContent = cfg.bookRuleLabel;
             const bookPctEl = document.getElementById('kpi-book-percent');
             const bookBadgeEl = document.getElementById('kpi-book-status-badge');
             bookPctEl.textContent = `${bookPct}%`;
 
-            if (cfg.hasMinBook10) {
-                document.getElementById('kpi-book-amount').textContent = `${formatRupiah(totalBook)} (Min: ${formatRupiah(minBook)})`;
-                if (totalBook >= minBook && basePagu > 0) {
-                    bookPctEl.className = "text-xl font-bold text-emerald-600";
-                    bookBadgeEl.textContent = "✓ Memenuhi Min. 10%";
-                    bookBadgeEl.className = "text-[11px] font-bold text-emerald-600";
-                } else {
-                    bookPctEl.className = "text-xl font-bold text-red-600";
-                    bookBadgeEl.textContent = "⚠ Kurang dari 10%!";
-                    bookBadgeEl.className = "text-[11px] font-bold text-red-600";
-                }
-            } else {
-                document.getElementById('kpi-book-amount').textContent = `${formatRupiah(totalBook)} (Alokasi Fleksibel)`;
-                bookPctEl.className = "text-xl font-bold text-orange-600";
-                bookBadgeEl.textContent = "✓ Sesuai Kebutuhan";
+            document.getElementById('kpi-book-amount').textContent = `${formatRupiah(totalBook)} (Min: ${formatRupiah(minBook)})`;
+            if (isBookValid) {
+                bookPctEl.className = "text-xl font-bold text-emerald-600";
+                bookBadgeEl.textContent = `✓ Memenuhi Min. ${minBookPctText}`;
                 bookBadgeEl.className = "text-[11px] font-bold text-emerald-600";
+            } else {
+                bookPctEl.className = "text-xl font-bold text-red-600";
+                bookBadgeEl.textContent = `⚠ Kurang dari ${minBookPctText}!`;
+                bookBadgeEl.className = "text-[11px] font-bold text-red-600";
             }
 
             // 2. Monitoring Pemeliharaan Sarpras (Maks. 20%)
             const sarprasPct = basePagu > 0 ? ((totalSarpras / basePagu) * 100).toFixed(2) : 0;
             const maxSarpras = basePagu * 0.20;
+            const isSarprasValid = (totalSarpras <= maxSarpras);
             const sarprasPctEl = document.getElementById('kpi-sarpras-percent');
             const sarprasBadgeEl = document.getElementById('kpi-sarpras-status-badge');
             document.getElementById('kpi-sarpras-amount').textContent = `${formatRupiah(totalSarpras)} (Maks: ${formatRupiah(maxSarpras)})`;
             sarprasPctEl.textContent = `${sarprasPct}%`;
 
-            if (totalSarpras <= maxSarpras) {
+            if (isSarprasValid) {
                 sarprasPctEl.className = "text-xl font-bold text-emerald-600";
                 sarprasBadgeEl.textContent = "✓ Aman (≤ 20%)";
                 sarprasBadgeEl.className = "text-[11px] font-bold text-emerald-600";
@@ -1861,11 +1830,13 @@
                 sarprasBadgeEl.className = "text-[11px] font-bold text-red-600";
             }
 
-            // 3. Monitoring Porsi Honorer (Maks. 20% Negeri / Maks. 40% Swasta)
+            // 3. Monitoring Porsi Honorer (Maks. 20% BOS Negeri / Maks. 40% BOS Swasta, PAUD, & Kesetaraan)
             const honorPct = basePagu > 0 ? ((totalHonor / basePagu) * 100).toFixed(2) : 0;
-            const limitRatio = schoolStatus === 'NEGERI' ? 0.20 : 0.40;
-            const limitLabel = schoolStatus === 'NEGERI' ? '20%' : '40%';
+            const isPaudOrKesetaraan = (level === 'PAUD' || level === 'KESETARAAN');
+            const limitRatio = (isPaudOrKesetaraan || schoolStatus === 'SWASTA') ? 0.40 : 0.20;
+            const limitLabel = (isPaudOrKesetaraan || schoolStatus === 'SWASTA') ? '40%' : '20%';
             const maxHonor = basePagu * limitRatio;
+            const isHonorValid = (totalHonor <= maxHonor);
 
             const honorPctEl = document.getElementById('kpi-honor-percent');
             const honorLimitBadge = document.getElementById('kpi-honor-limit-badge');
@@ -1873,10 +1844,10 @@
             const honorAmtEl = document.getElementById('kpi-honor-amount');
 
             honorPctEl.textContent = `${honorPct}%`;
-            honorLimitBadge.textContent = `Maks. ${limitLabel} (${schoolStatus === 'NEGERI' ? 'Negeri' : 'Swasta'})`;
+            honorLimitBadge.textContent = `Maks. ${limitLabel} (${isPaudOrKesetaraan ? level : (schoolStatus === 'NEGERI' ? 'Negeri' : 'Swasta')})`;
             honorAmtEl.textContent = `${formatRupiah(totalHonor)} (Maks: ${formatRupiah(maxHonor)})`;
 
-            if (totalHonor <= maxHonor) {
+            if (isHonorValid) {
                 honorPctEl.className = "text-xl font-bold text-purple-700";
                 honorStatusBadge.textContent = `✓ Aman (≤ ${limitLabel})`;
                 honorStatusBadge.className = "text-[11px] font-bold text-emerald-600";
@@ -1889,75 +1860,65 @@
             // 4. Update Distribusi Tahap 1 (Jan-Jun) vs Tahap 2 (Jul-Des)
             const t1Pct = totalPagu > 0 ? ((totalTahap1 / totalPagu) * 100).toFixed(1) : 0;
             const t2Pct = totalPagu > 0 ? ((totalTahap2 / totalPagu) * 100).toFixed(1) : 0;
+            const isTahap1Valid = (parseFloat(t1Pct) <= 50.5);
+
             document.getElementById('kpi-tahap1-amount').textContent = formatRupiah(totalTahap1);
             document.getElementById('kpi-tahap1-pct').textContent = `${t1Pct}% dari Pagu`;
-            document.getElementById('kpi-tahap1-pct').className = parseFloat(t1Pct) > 55 ? "text-[11px] font-bold text-amber-600" : "text-[11px] font-semibold text-primary-600";
+            document.getElementById('kpi-tahap1-pct').className = !isTahap1Valid ? "text-[11px] font-bold text-amber-600" : "text-[11px] font-semibold text-primary-600";
             
             document.getElementById('kpi-tahap2-amount').textContent = formatRupiah(totalTahap2);
             document.getElementById('kpi-tahap2-pct').textContent = `${t2Pct}% dari Pagu`;
-        }
 
-        // --- LOGIKA MODAL TAMBAH & EDIT ---
-        function openItemModal(id = null) {
-            const modal = document.getElementById('item-modal');
-            const title = document.getElementById('modal-title');
-            const form = document.getElementById('rkas-form');
-            const monthInputs = document.querySelectorAll('.month-vol-input');
+            // 5. Update Panel Master Sinkronisasi Persentase Pengisian & 5 Kriteria Kepatuhan Regulasi
+            const isPagu100 = (remaining === 0 && totalPagu > 0);
+            const masterPctEl = document.getElementById('master-fill-pct');
+            const masterBarEl = document.getElementById('master-progress-bar');
+            const masterSummaryEl = document.getElementById('master-compliance-summary');
+            const masterScoreEl = document.getElementById('master-score-text');
 
-            form.reset();
-            document.getElementById('edit-id').value = '';
-            monthInputs.forEach(inp => inp.value = 0);
+            masterPctEl.textContent = `${exactPctBudget.toFixed(2)}%`;
+            masterBarEl.style.width = `${Math.min(100, Math.max(0, exactPctBudget))}%`;
 
-            if (id) {
-                const item = rkasItems.find(i => i.id === id);
-                if (item) {
-                    title.innerHTML = `<i class="fa-solid fa-pen-to-square"></i><span>Edit Rincian Kegiatan RKAS</span>`;
-                    document.getElementById('edit-id').value = item.id;
-                    
-                    const formKegiatan = document.getElementById('form-kegiatan');
-                    if (!Array.from(formKegiatan.options).some(o => o.value === item.kegiatan)) {
-                        const opt = document.createElement('option');
-                        opt.value = item.kegiatan;
-                        opt.textContent = item.kegiatan;
-                        formKegiatan.appendChild(opt);
-                    }
-                    formKegiatan.value = item.kegiatan;
-                    document.getElementById('form-rekening').value = item.rekening;
-                    document.getElementById('form-uraian').value = item.uraian;
-                    document.getElementById('form-satuan').value = item.satuan;
-                    document.getElementById('form-harga').value = item.harga;
-                    document.getElementById('form-scale-mode').value = item.scaleMode || 'MANUAL';
-                    
-                    item.months.forEach((val, idx) => {
-                        if (monthInputs[idx]) monthInputs[idx].value = val;
-                    });
-                }
+            if (exactPctBudget > 100) {
+                masterPctEl.className = "text-red-400 text-xl sm:text-2xl font-extrabold";
+                masterBarEl.className = "bg-red-500 h-2 rounded-full transition-all duration-500";
+            } else if (isPagu100) {
+                masterPctEl.className = "text-emerald-400 text-xl sm:text-2xl font-extrabold";
+                masterBarEl.className = "bg-emerald-400 h-2 rounded-full transition-all duration-500";
             } else {
-                title.innerHTML = `<i class="fa-solid fa-plus-circle"></i><span>Tambah Rincian Kegiatan RKAS</span>`;
+                masterPctEl.className = "text-amber-300 text-xl sm:text-2xl font-extrabold";
+                masterBarEl.className = "bg-amber-400 h-2 rounded-full transition-all duration-500";
             }
 
-            checkHonorCategory();
-            recalcModalTotal();
-            modal.classList.remove('hidden');
-        }
+            const setRuleBadge = (id, passed, passText, failText, isWarningOnly = false) => {
+                const el = document.getElementById(id);
+                if (passed) {
+                    el.className = "px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 flex items-center gap-1.5";
+                    el.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${passText}`;
+                } else if (isWarningOnly) {
+                    el.className = "px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 flex items-center gap-1.5";
+                    el.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> ${failText}`;
+                } else {
+                    el.className = "px-3 py-1.5 rounded-xl bg-red-500/20 border border-red-400/40 text-red-200 flex items-center gap-1.5";
+                    el.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-400"></i> ${failText}`;
+                }
+            };
 
-        function closeItemModal() {
-            document.getElementById('item-modal').classList.add('hidden');
-        }
+            setRuleBadge('badge-rule-pagu', isPagu100, 'Pagu 100% (Pas)', remaining > 0 ? `Sisa ${(100 - exactPctBudget).toFixed(1)}%` : 'Melebihi Pagu!', remaining > 0);
+            setRuleBadge('badge-rule-book', isBookValid, `Buku ≥ ${minBookPctText} (${bookPct}%)`, `Buku < ${minBookPctText} (${bookPct}%)`);
+            setRuleBadge('badge-rule-sarpras', isSarprasValid, `Sarpras ≤ 20% (${sarprasPct}%)`, `Sarpras > 20% (${sarprasPct}%)`);
+            setRuleBadge('badge-rule-honor', isHonorValid, `Honor ≤ ${limitLabel} (${honorPct}%)`, `Honor > ${limitLabel} (${honorPct}%)`);
+            setRuleBadge('badge-rule-tahap1', isTahap1Valid, `Tahap I (${t1Pct}%)`, `Tahap I > 50% (${t1Pct}%)`, true);
 
-        function checkHonorCategory() {
-            const rek = document.getElementById('form-rekening').value.toLowerCase();
-            const keg = document.getElementById('form-kegiatan').value.toLowerCase();
-            const status = document.getElementById('school-status').value;
-            const alertBox = document.getElementById('modal-honor-alert');
-            const alertText = document.getElementById('modal-honor-alert-text');
-
-            if (keg.includes("pembayaran honor") || rek.includes("honorarium") || rek.includes("5.1.02.02.01.0013")) {
-                const limitStr = status === 'NEGERI' ? '20% (Sekolah Negeri)' : '40% (Sekolah Swasta)';
-                alertText.innerHTML = `Item ini terdeteksi sebagai <strong>Belanja Honorer</strong>. Pastikan total keseluruhan tidak melebihi batas <strong>${limitStr}</strong>, penerima bukan ASN, tercatat di Dapodik, dan belum menerima TPG.`;
-                alertBox.classList.remove('hidden');
+            const passedCount = [isPagu100, isBookValid, isSarprasValid, isHonorValid, isTahap1Valid].filter(Boolean).length;
+            masterScoreEl.textContent = `Skor Kepatuhan: ${passedCount} / 5 Kriteria Memenuhi Regulasi`;
+            
+            if (passedCount === 5) {
+                masterSummaryEl.textContent = "SELAMAT! Seluruh persentase komponen dan total alokasi 100% telah memenuhi kaidah Permendikdasmen No. 8 Tahun 2026 & siap disahkan.";
+                masterSummaryEl.className = "text-xs text-emerald-300 font-semibold";
             } else {
-                alertBox.classList.add('hidden');
+                masterSummaryEl.textContent = `Terdapat ${5 - passedCount} kriteria yang perlu disesuaikan (perhatikan lencana berwarna kuning/merah di samping).`;
+                masterSummaryEl.className = "text-xs text-slate-300";
             }
         }
 
@@ -2076,7 +2037,7 @@
             } else {
                 btnPort.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 transition flex items-center gap-1";
                 btnLand.className = "px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-200 hover:text-white transition flex items-center gap-1";
-                printArea.style.width = "760px"; // Lebar bersih kertas A4 Portrait
+                printArea.style.width = "760px";
                 printArea.style.maxWidth = "760px";
                 printArea.style.padding = "18px";
             }
@@ -2104,7 +2065,6 @@
             const headmasterNip = document.getElementById('headmaster-nip').value;
             const treasurerName = document.getElementById('treasurer-name').value || "........................................";
 
-            // Pada mode Portrait, tampilkan angka bulanan dalam ribuan (misal 12.000) agar presisi 100% di lebar A4 Portrait tanpa terpotong
             const formatDocMonth = (val) => {
                 if (val === 0) return '-';
                 if (isPortrait) {
@@ -2269,7 +2229,6 @@
         }
 
         function printPDF() {
-            // Sisipkan aturan @page dinamis agar dialog cetak browser otomatis menyesuaikan Landscape / Portrait
             let dynamicPageStyle = document.getElementById('dynamic-print-page-style');
             if (!dynamicPageStyle) {
                 dynamicPageStyle = document.createElement('style');
